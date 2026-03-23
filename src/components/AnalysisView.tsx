@@ -29,6 +29,8 @@ const TRACES = [
 
 const REVEAL_RADIUS = 0.5;
 const GROUP_OFFSET = new THREE.Vector3(0, -0.9, 0);
+const SCAN_MIN_DIST = 0.1;
+const SCAN_MAX_POINTS = 800;
 
 /* ── UV spot that follows the pointer ── */
 function UVSpot({ position }: { position: [number, number, number] }) {
@@ -122,6 +124,52 @@ function GlowSpot({
 }
 
 
+/* ── UV scan trail (shows where the lamp has passed) ── */
+function ScanTrail({
+  pointsRef,
+}: {
+  pointsRef: React.RefObject<[number, number, number][]>;
+}) {
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const lastCount = useRef(0);
+
+  useFrame(() => {
+    if (!meshRef.current || !pointsRef.current) return;
+    const pts = pointsRef.current;
+    if (pts.length === lastCount.current) return;
+
+    for (let i = lastCount.current; i < pts.length; i++) {
+      const [x, y, z] = pts[i];
+      // Push slightly outward from the cup center (radial normal)
+      const nx = x, nz = z;
+      const len = Math.sqrt(nx * nx + nz * nz) || 1;
+      dummy.position.set(x + (nx / len) * 0.02, y, z + (nz / len) * 0.02);
+      // Orient circle to face outward from the Y axis
+      dummy.lookAt(x + nx / len, y, z + nz / len);
+      dummy.updateMatrix();
+      meshRef.current.setMatrixAt(i, dummy.matrix);
+    }
+    meshRef.current.count = pts.length;
+    meshRef.current.instanceMatrix.needsUpdate = true;
+    lastCount.current = pts.length;
+  });
+
+  return (
+    <instancedMesh ref={meshRef} args={[undefined, undefined, SCAN_MAX_POINTS]} renderOrder={5}>
+      <circleGeometry args={[0.12, 12]} />
+      <meshStandardMaterial
+        emissive="#7733dd"
+        emissiveIntensity={0.7}
+        transparent
+        opacity={0.2}
+        side={THREE.DoubleSide}
+        depthWrite={false}
+      />
+    </instancedMesh>
+  );
+}
+
 /* ── Coffee cup mesh ── */
 function Cup({
   uvOn,
@@ -136,6 +184,7 @@ function Cup({
     null
   );
   const [revealedTraces, setRevealedTraces] = useState<Set<number>>(new Set());
+  const scanPointsRef = useRef<[number, number, number][]>([]);
 
   const cupColor = uvOn ? "#1a0e2e" : "#f5f0e8";
   const coffeeColor = uvOn ? "#0a0515" : "#3c1f0a";
@@ -173,7 +222,10 @@ function Cup({
   );
 
   useEffect(() => {
-    if (!uvOn) setLightPos(null);
+    if (!uvOn) {
+      setLightPos(null);
+      scanPointsRef.current = [];
+    }
   }, [uvOn]);
 
   useEffect(() => {
@@ -192,7 +244,18 @@ function Cup({
       ];
       setLightPos(localPoint);
 
-      const pt = new THREE.Vector3(...localPoint);
+      // Accumulate scan trail points (throttled by min distance)
+      const pts = scanPointsRef.current;
+      const last = pts[pts.length - 1];
+      const lp = new THREE.Vector3(...localPoint);
+      if (
+        pts.length < SCAN_MAX_POINTS &&
+        (!last || lp.distanceTo(new THREE.Vector3(...last)) > SCAN_MIN_DIST)
+      ) {
+        pts.push(localPoint);
+      }
+
+      const pt = lp;
       TRACES.forEach((trace, i) => {
         const tracePos = new THREE.Vector3(...trace.position);
         if (pt.distanceTo(tracePos) < REVEAL_RADIUS) {
@@ -253,6 +316,9 @@ function Cup({
         <circleGeometry args={[0.95, 48]} />
         <meshStandardMaterial color={coffeeColor} roughness={0.8} />
       </mesh>
+
+      {/* UV scan trail */}
+      {uvOn && <ScanTrail pointsRef={scanPointsRef} />}
 
       {/* UV light spot */}
       {uvOn && lightPos && <UVSpot position={lightPos} />}

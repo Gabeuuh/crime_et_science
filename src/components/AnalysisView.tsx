@@ -9,21 +9,29 @@ const TRACES = [
     position: [1.05, 0.9, 0.2] as [number, number, number],
     scale: 0.14,
     label: "Empreinte digitale",
+    reportLabel: "Empreinte digitale #1",
+    reportValue: "Boucle ulnaire gauche — 12 minuties",
   },
   {
     position: [0.6, 0.5, 0.85] as [number, number, number],
     scale: 0.11,
     label: "Empreinte digitale",
+    reportLabel: "Empreinte digitale #2",
+    reportValue: "Arc simple — 9 minuties",
   },
   {
     position: [0.15, 1.78, 1.0] as [number, number, number],
     scale: 0.18,
     label: "Trace ADN (salive)",
+    reportLabel: "Profil ADN (salive)",
+    reportValue: "STR : D3S1358-16/17 · D16S539-11/12 · TH01-6/9.3 · vWA-17/18",
   },
   {
     position: [-0.8, 0.7, 0.65] as [number, number, number],
     scale: 0.09,
     label: "Résidu cutané",
+    reportLabel: "Résidu cutané (cellules épithéliales)",
+    reportValue: "Groupe sanguin : A+ · Marqueur amélogénine : XY",
   },
 ];
 
@@ -281,10 +289,12 @@ function Cup({
       {/* Cup body */}
       <mesh
         ref={cupMeshRef}
-        onPointerDown={handlePointer as any}
-        onPointerMove={handlePointer as any}
-        onPointerUp={handlePointerOut}
-        onPointerLeave={handlePointerOut}
+        {...(uvOn ? {
+          onPointerDown: handlePointer,
+          onPointerMove: handlePointer,
+          onPointerUp: handlePointerOut,
+          onPointerLeave: handlePointerOut,
+        } : {})}
       >
         <latheGeometry args={[points, 48]} />
         <meshStandardMaterial
@@ -298,10 +308,12 @@ function Cup({
       {/* Handle */}
       <mesh
         ref={handleMeshRef}
-        onPointerDown={handlePointer as any}
-        onPointerMove={handlePointer as any}
-        onPointerUp={handlePointerOut}
-        onPointerLeave={handlePointerOut}
+        {...(uvOn ? {
+          onPointerDown: handlePointer,
+          onPointerMove: handlePointer,
+          onPointerUp: handlePointerOut,
+          onPointerLeave: handlePointerOut,
+        } : {})}
       >
         <tubeGeometry args={[handleCurve, 24, 0.07, 12, false]} />
         <meshStandardMaterial
@@ -348,7 +360,15 @@ interface Props {
 export default function AnalysisView({ onBack }: Props) {
   const [uvOn, setUvOn] = useState(false);
   const [foundCount, setFoundCount] = useState(0);
+  const [showReport, setShowReport] = useState(false);
   const allFound = foundCount === TRACES.length;
+
+  useEffect(() => {
+    if (allFound && uvOn) {
+      const timer = setTimeout(() => setShowReport(true), 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [allFound, uvOn]);
 
   return (
     <div className="analysis-view">
@@ -426,16 +446,47 @@ export default function AnalysisView({ onBack }: Props) {
         </div>
       )}
 
-      {uvOn && allFound && (
-        <div className="all-found-banner">
-          🏆 Toutes les traces ont été relevées !
-        </div>
-      )}
-
-      {!uvOn && (
+      {!uvOn && !showReport && (
         <div className="instructions">
           Faites glisser pour tourner • Activez la lampe UV pour révéler les
           traces
+        </div>
+      )}
+
+      {/* ── Evidence report card ── */}
+      {showReport && (
+        <div className="report-overlay">
+          <div className="report-card">
+            <div className="report-header">
+              <span className="report-badge">CONFIDENTIEL</span>
+              <h3>Rapport d'analyse scientifique</h3>
+              <p className="report-ref">
+                Indice : Tasse de cafe — Ref. SC-2024-0847
+              </p>
+            </div>
+
+            <div className="report-body">
+              {TRACES.map((trace, i) => (
+                <div key={i} className="report-row">
+                  <div className="report-row-icon">
+                    {trace.label.includes("ADN") ? "🧬" :
+                     trace.label.includes("Empreinte") ? "🔍" : "🧪"}
+                  </div>
+                  <div className="report-row-content">
+                    <span className="report-row-label">{trace.reportLabel}</span>
+                    <span className="report-row-value">{trace.reportValue}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="report-footer">
+              <p>Comparez ces resultats avec le dossier suspect.</p>
+              <button className="report-close-btn" onClick={() => setShowReport(false)}>
+                Fermer le rapport
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -1,5 +1,5 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
-import { Canvas, useThree, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Html } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -85,14 +85,14 @@ function GlowSpot({
     if (!meshRef.current) return;
     fadeRef.current = Math.min(fadeRef.current + 0.04, 1);
     const mat = meshRef.current.material as THREE.MeshStandardMaterial;
-    mat.opacity = fadeRef.current * 0.6;
+    mat.opacity = fadeRef.current * 0.85;
     mat.emissiveIntensity =
-      fadeRef.current * (1.5 + Math.sin(clock.getElapsedTime() * 3) * 0.5);
+      fadeRef.current * (2.5 + Math.sin(clock.getElapsedTime() * 3) * 0.5);
   });
 
   return (
     <group position={position}>
-      <mesh ref={meshRef}>
+      <mesh ref={meshRef} renderOrder={10}>
         <sphereGeometry args={[scale, 16, 16]} />
         <meshStandardMaterial
           emissive="#00ff88"
@@ -100,16 +100,18 @@ function GlowSpot({
           transparent
           opacity={0}
           color="#003322"
+          depthWrite={false}
         />
       </mesh>
-      <mesh>
+      <mesh renderOrder={9}>
         <sphereGeometry args={[scale * 1.8, 16, 16]} />
         <meshStandardMaterial
           emissive="#00ff66"
-          emissiveIntensity={0.4}
+          emissiveIntensity={0.8}
           transparent
-          opacity={0.12}
+          opacity={0.25}
           color="#000000"
+          depthWrite={false}
         />
       </mesh>
       <Html position={[0, scale + 0.2, 0]} center>
@@ -119,83 +121,6 @@ function GlowSpot({
   );
 }
 
-/* ── Manual raycaster for UV sweep (works reliably on mobile) ── */
-function UVRaycaster({
-  uvOn,
-  cupMeshRef,
-  handleMeshRef,
-  onHit,
-  onMiss,
-}: {
-  uvOn: boolean;
-  cupMeshRef: React.RefObject<THREE.Mesh | null>;
-  handleMeshRef: React.RefObject<THREE.Mesh | null>;
-  onHit: (localPoint: [number, number, number]) => void;
-  onMiss: () => void;
-}) {
-  const { camera, gl } = useThree();
-  const raycaster = useMemo(() => new THREE.Raycaster(), []);
-  const pointer = useMemo(() => new THREE.Vector2(), []);
-
-  useEffect(() => {
-    if (!uvOn) return;
-
-    const canvas = gl.domElement;
-
-    const updatePointer = (clientX: number, clientY: number) => {
-      const rect = canvas.getBoundingClientRect();
-      pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
-
-      raycaster.setFromCamera(pointer, camera);
-
-      const targets: THREE.Object3D[] = [];
-      if (cupMeshRef.current) targets.push(cupMeshRef.current);
-      if (handleMeshRef.current) targets.push(handleMeshRef.current);
-
-      const intersects = raycaster.intersectObjects(targets);
-      if (intersects.length > 0) {
-        const local = intersects[0].point.clone().sub(GROUP_OFFSET);
-        onHit([local.x, local.y, local.z]);
-      } else {
-        onMiss();
-      }
-    };
-
-    const onTouchStart = (e: TouchEvent) => {
-      e.preventDefault();
-      const t = e.touches[0];
-      updatePointer(t.clientX, t.clientY);
-    };
-    const onTouchMove = (e: TouchEvent) => {
-      e.preventDefault();
-      const t = e.touches[0];
-      updatePointer(t.clientX, t.clientY);
-    };
-    const onTouchEnd = () => onMiss();
-
-    const onMouseMove = (e: MouseEvent) => {
-      updatePointer(e.clientX, e.clientY);
-    };
-    const onMouseLeave = () => onMiss();
-
-    canvas.addEventListener("touchstart", onTouchStart, { passive: false });
-    canvas.addEventListener("touchmove", onTouchMove, { passive: false });
-    canvas.addEventListener("touchend", onTouchEnd);
-    canvas.addEventListener("mousemove", onMouseMove);
-    canvas.addEventListener("mouseleave", onMouseLeave);
-
-    return () => {
-      canvas.removeEventListener("touchstart", onTouchStart);
-      canvas.removeEventListener("touchmove", onTouchMove);
-      canvas.removeEventListener("touchend", onTouchEnd);
-      canvas.removeEventListener("mousemove", onMouseMove);
-      canvas.removeEventListener("mouseleave", onMouseLeave);
-    };
-  }, [uvOn, camera, gl, raycaster, pointer, cupMeshRef, handleMeshRef, onHit, onMiss]);
-
-  return null;
-}
 
 /* ── Coffee cup mesh ── */
 function Cup({
@@ -255,9 +180,16 @@ function Cup({
     onFoundCountChange(revealedTraces.size);
   }, [revealedTraces.size, onFoundCountChange]);
 
-  const onHit = useCallback(
-    (localPoint: [number, number, number]) => {
+  const handlePointer = useCallback(
+    (e: any) => {
       if (!uvOn) return;
+      e.stopPropagation();
+      const wp = e.point;
+      const localPoint: [number, number, number] = [
+        wp.x - GROUP_OFFSET.x,
+        wp.y - GROUP_OFFSET.y,
+        wp.z - GROUP_OFFSET.z,
+      ];
       setLightPos(localPoint);
 
       const pt = new THREE.Vector3(...localPoint);
@@ -277,23 +209,20 @@ function Cup({
     [uvOn]
   );
 
-  const onMiss = useCallback(() => {
+  const handlePointerOut = useCallback(() => {
     setLightPos(null);
   }, []);
 
   return (
     <group position={[0, -0.9, 0]}>
-      {/* Manual raycaster for reliable mobile touch */}
-      <UVRaycaster
-        uvOn={uvOn}
-        cupMeshRef={cupMeshRef}
-        handleMeshRef={handleMeshRef}
-        onHit={onHit}
-        onMiss={onMiss}
-      />
-
       {/* Cup body */}
-      <mesh ref={cupMeshRef}>
+      <mesh
+        ref={cupMeshRef}
+        onPointerDown={handlePointer as any}
+        onPointerMove={handlePointer as any}
+        onPointerUp={handlePointerOut}
+        onPointerLeave={handlePointerOut}
+      >
         <latheGeometry args={[points, 48]} />
         <meshStandardMaterial
           color={cupColor}
@@ -304,7 +233,13 @@ function Cup({
       </mesh>
 
       {/* Handle */}
-      <mesh ref={handleMeshRef}>
+      <mesh
+        ref={handleMeshRef}
+        onPointerDown={handlePointer as any}
+        onPointerMove={handlePointer as any}
+        onPointerUp={handlePointerOut}
+        onPointerLeave={handlePointerOut}
+      >
         <tubeGeometry args={[handleCurve, 24, 0.07, 12, false]} />
         <meshStandardMaterial
           color={cupColor}

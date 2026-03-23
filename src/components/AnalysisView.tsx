@@ -1,6 +1,5 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import type { ThreeEvent } from "@react-three/fiber";
+import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import { OrbitControls, Html } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -29,6 +28,7 @@ const TRACES = [
 ];
 
 const REVEAL_RADIUS = 0.5;
+const GROUP_OFFSET = new THREE.Vector3(0, -0.9, 0);
 
 /* ── UV spot that follows the pointer ── */
 function UVSpot({ position }: { position: [number, number, number] }) {
@@ -43,7 +43,6 @@ function UVSpot({ position }: { position: [number, number, number] }) {
   return (
     <group position={position}>
       <pointLight color="#8800ff" intensity={3} distance={2.5} />
-      {/* Center dot */}
       <mesh ref={ref}>
         <sphereGeometry args={[0.05, 16, 16]} />
         <meshStandardMaterial
@@ -54,7 +53,6 @@ function UVSpot({ position }: { position: [number, number, number] }) {
           color="#440088"
         />
       </mesh>
-      {/* Wider halo */}
       <mesh>
         <sphereGeometry args={[REVEAL_RADIUS * 0.6, 24, 24]} />
         <meshStandardMaterial
@@ -85,11 +83,11 @@ function GlowSpot({
 
   useFrame(({ clock }) => {
     if (!meshRef.current) return;
-    // Fade in over ~0.5s
     fadeRef.current = Math.min(fadeRef.current + 0.04, 1);
     const mat = meshRef.current.material as THREE.MeshStandardMaterial;
     mat.opacity = fadeRef.current * 0.6;
-    mat.emissiveIntensity = fadeRef.current * (1.5 + Math.sin(clock.getElapsedTime() * 3) * 0.5);
+    mat.emissiveIntensity =
+      fadeRef.current * (1.5 + Math.sin(clock.getElapsedTime() * 3) * 0.5);
   });
 
   return (
@@ -104,7 +102,6 @@ function GlowSpot({
           color="#003322"
         />
       </mesh>
-      {/* Outer glow */}
       <mesh>
         <sphereGeometry args={[scale * 1.8, 16, 16]} />
         <meshStandardMaterial
@@ -122,6 +119,84 @@ function GlowSpot({
   );
 }
 
+/* ── Manual raycaster for UV sweep (works reliably on mobile) ── */
+function UVRaycaster({
+  uvOn,
+  cupMeshRef,
+  handleMeshRef,
+  onHit,
+  onMiss,
+}: {
+  uvOn: boolean;
+  cupMeshRef: React.RefObject<THREE.Mesh | null>;
+  handleMeshRef: React.RefObject<THREE.Mesh | null>;
+  onHit: (localPoint: [number, number, number]) => void;
+  onMiss: () => void;
+}) {
+  const { camera, gl } = useThree();
+  const raycaster = useMemo(() => new THREE.Raycaster(), []);
+  const pointer = useMemo(() => new THREE.Vector2(), []);
+
+  useEffect(() => {
+    if (!uvOn) return;
+
+    const canvas = gl.domElement;
+
+    const updatePointer = (clientX: number, clientY: number) => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(pointer, camera);
+
+      const targets: THREE.Object3D[] = [];
+      if (cupMeshRef.current) targets.push(cupMeshRef.current);
+      if (handleMeshRef.current) targets.push(handleMeshRef.current);
+
+      const intersects = raycaster.intersectObjects(targets);
+      if (intersects.length > 0) {
+        const local = intersects[0].point.clone().sub(GROUP_OFFSET);
+        onHit([local.x, local.y, local.z]);
+      } else {
+        onMiss();
+      }
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      e.preventDefault();
+      const t = e.touches[0];
+      updatePointer(t.clientX, t.clientY);
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      const t = e.touches[0];
+      updatePointer(t.clientX, t.clientY);
+    };
+    const onTouchEnd = () => onMiss();
+
+    const onMouseMove = (e: MouseEvent) => {
+      updatePointer(e.clientX, e.clientY);
+    };
+    const onMouseLeave = () => onMiss();
+
+    canvas.addEventListener("touchstart", onTouchStart, { passive: false });
+    canvas.addEventListener("touchmove", onTouchMove, { passive: false });
+    canvas.addEventListener("touchend", onTouchEnd);
+    canvas.addEventListener("mousemove", onMouseMove);
+    canvas.addEventListener("mouseleave", onMouseLeave);
+
+    return () => {
+      canvas.removeEventListener("touchstart", onTouchStart);
+      canvas.removeEventListener("touchmove", onTouchMove);
+      canvas.removeEventListener("touchend", onTouchEnd);
+      canvas.removeEventListener("mousemove", onMouseMove);
+      canvas.removeEventListener("mouseleave", onMouseLeave);
+    };
+  }, [uvOn, camera, gl, raycaster, pointer, cupMeshRef, handleMeshRef, onHit, onMiss]);
+
+  return null;
+}
+
 /* ── Coffee cup mesh ── */
 function Cup({
   uvOn,
@@ -130,15 +205,16 @@ function Cup({
   uvOn: boolean;
   onFoundCountChange: (count: number) => void;
 }) {
-  const [lightPos, setLightPos] = useState<[number, number, number] | null>(null);
+  const cupMeshRef = useRef<THREE.Mesh>(null);
+  const handleMeshRef = useRef<THREE.Mesh>(null);
+  const [lightPos, setLightPos] = useState<[number, number, number] | null>(
+    null
+  );
   const [revealedTraces, setRevealedTraces] = useState<Set<number>>(new Set());
-
-  const groupOffset = useMemo(() => new THREE.Vector3(0, -0.9, 0), []);
 
   const cupColor = uvOn ? "#1a0e2e" : "#f5f0e8";
   const coffeeColor = uvOn ? "#0a0515" : "#3c1f0a";
 
-  // Cup profile (cross-section revolved around Y axis)
   const points = useMemo(
     () => [
       new THREE.Vector2(0.01, 0),
@@ -159,7 +235,6 @@ function Cup({
     []
   );
 
-  // Handle curve
   const handleCurve = useMemo(
     () =>
       new THREE.CatmullRomCurve3([
@@ -172,52 +247,53 @@ function Cup({
     []
   );
 
-  // Clear light when UV turned off
   useEffect(() => {
     if (!uvOn) setLightPos(null);
   }, [uvOn]);
 
-  // Notify parent of found count
   useEffect(() => {
     onFoundCountChange(revealedTraces.size);
   }, [revealedTraces.size, onFoundCountChange]);
 
-  const handlePointerMove = useCallback(
-    (e: ThreeEvent<PointerEvent>) => {
+  const onHit = useCallback(
+    (localPoint: [number, number, number]) => {
       if (!uvOn) return;
-      // Convert world intersection to local group space
-      const local = e.point.clone().sub(groupOffset);
-      setLightPos([local.x, local.y, local.z]);
+      setLightPos(localPoint);
 
-      // Check proximity to each trace
+      const pt = new THREE.Vector3(...localPoint);
       TRACES.forEach((trace, i) => {
         const tracePos = new THREE.Vector3(...trace.position);
-        if (local.distanceTo(tracePos) < REVEAL_RADIUS) {
+        if (pt.distanceTo(tracePos) < REVEAL_RADIUS) {
           setRevealedTraces((prev) => {
             if (prev.has(i)) return prev;
             const next = new Set(prev);
             next.add(i);
-            // Haptic feedback on discovery
             navigator.vibrate?.(80);
             return next;
           });
         }
       });
     },
-    [uvOn, groupOffset]
+    [uvOn]
   );
 
-  const handlePointerLeave = useCallback(() => {
+  const onMiss = useCallback(() => {
     setLightPos(null);
   }, []);
 
   return (
     <group position={[0, -0.9, 0]}>
+      {/* Manual raycaster for reliable mobile touch */}
+      <UVRaycaster
+        uvOn={uvOn}
+        cupMeshRef={cupMeshRef}
+        handleMeshRef={handleMeshRef}
+        onHit={onHit}
+        onMiss={onMiss}
+      />
+
       {/* Cup body */}
-      <mesh
-        onPointerMove={handlePointerMove}
-        onPointerLeave={handlePointerLeave}
-      >
+      <mesh ref={cupMeshRef}>
         <latheGeometry args={[points, 48]} />
         <meshStandardMaterial
           color={cupColor}
@@ -228,12 +304,13 @@ function Cup({
       </mesh>
 
       {/* Handle */}
-      <mesh
-        onPointerMove={handlePointerMove}
-        onPointerLeave={handlePointerLeave}
-      >
+      <mesh ref={handleMeshRef}>
         <tubeGeometry args={[handleCurve, 24, 0.07, 12, false]} />
-        <meshStandardMaterial color={cupColor} roughness={0.35} metalness={0.05} />
+        <meshStandardMaterial
+          color={cupColor}
+          roughness={0.35}
+          metalness={0.05}
+        />
       </mesh>
 
       {/* Coffee surface */}
@@ -242,7 +319,7 @@ function Cup({
         <meshStandardMaterial color={coffeeColor} roughness={0.8} />
       </mesh>
 
-      {/* UV light spot following pointer */}
+      {/* UV light spot */}
       {uvOn && lightPos && <UVSpot position={lightPos} />}
 
       {/* Revealed traces */}
@@ -274,7 +351,6 @@ export default function AnalysisView({ onBack }: Props) {
 
   return (
     <div className="analysis-view">
-      {/* Header */}
       <header className="analysis-header">
         <button className="back-btn" onClick={onBack}>
           ← Retour
@@ -283,12 +359,10 @@ export default function AnalysisView({ onBack }: Props) {
         <span className="evidence-tag">☕ TASSE DE CAFÉ</span>
       </header>
 
-      {/* 3D Canvas */}
       <div className="canvas-container">
         <Canvas camera={{ position: [3, 2, 3], fov: 45 }}>
           <color attach="background" args={[uvOn ? "#08001a" : "#1a1a2e"]} />
 
-          {/* Lighting — very dark in UV mode, only the UV spot illuminates */}
           <ambientLight
             intensity={uvOn ? 0.04 : 0.5}
             color={uvOn ? "#220044" : "#ffffff"}
@@ -304,7 +378,6 @@ export default function AnalysisView({ onBack }: Props) {
 
           <Cup uvOn={uvOn} onFoundCountChange={setFoundCount} />
 
-          {/* Ground grid */}
           <gridHelper
             args={[
               8,
@@ -315,17 +388,18 @@ export default function AnalysisView({ onBack }: Props) {
             position={[0, -0.92, 0]}
           />
 
+          {/* Disable OrbitControls in UV mode so touch goes to raycaster */}
           <OrbitControls
             enablePan={false}
             minDistance={2.5}
             maxDistance={7}
             autoRotate={!uvOn}
             autoRotateSpeed={1.5}
+            enabled={!uvOn}
           />
         </Canvas>
       </div>
 
-      {/* Toolbar */}
       <div className="tools-bar">
         <button
           className={`tool-btn ${uvOn ? "active" : ""}`}
@@ -342,24 +416,21 @@ export default function AnalysisView({ onBack }: Props) {
         )}
       </div>
 
-      {/* UV indicator */}
       {uvOn && !allFound && (
         <div className="uv-indicator">
           <span className="uv-dot" />
           {foundCount === 0
-            ? "Balayez la tasse pour chercher des traces"
+            ? "Balayez la tasse avec le doigt"
             : `${foundCount}/${TRACES.length} traces biologiques détectées`}
         </div>
       )}
 
-      {/* All traces found */}
       {uvOn && allFound && (
         <div className="all-found-banner">
           🏆 Toutes les traces ont été relevées !
         </div>
       )}
 
-      {/* Instructions */}
       {!uvOn && (
         <div className="instructions">
           Faites glisser pour tourner • Activez la lampe UV pour révéler les

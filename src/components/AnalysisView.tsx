@@ -378,15 +378,18 @@ export default function AnalysisView({ onBack }: Props) {
     <div className="analysis-view">
       <header className="analysis-header">
         <button className="back-btn" onClick={onBack}>
-          ← Retour
+          ← RETOUR
         </button>
-        <h2>🔬 Analyse de l'indice</h2>
-        <span className="evidence-tag">☕ TASSE DE CAFÉ</span>
+        <div className="header-center">
+          <span className="header-dept">POLICE SCIENTIFIQUE</span>
+          <span className="header-case">Affaire #2024-0847</span>
+        </div>
+        <span className="evidence-tag">PIECE A CONV. — TASSE</span>
       </header>
 
       <div className="canvas-container">
         <Canvas camera={{ position: [3, 2, 3], fov: 45 }}>
-          <color attach="background" args={[uvOn ? "#08001a" : "#1a1a2e"]} />
+          <color attach="background" args={[uvOn ? "#05091a" : "#0e1525"]} />
 
           <ambientLight
             intensity={uvOn ? 0.04 : 0.5}
@@ -407,13 +410,12 @@ export default function AnalysisView({ onBack }: Props) {
             args={[
               8,
               16,
-              uvOn ? "#1a0033" : "#2a2a4a",
-              uvOn ? "#0d001a" : "#1e1e3a",
+              uvOn ? "#1a0033" : "#1a2540",
+              uvOn ? "#0d001a" : "#111c30",
             ]}
             position={[0, -0.92, 0]}
           />
 
-          {/* Disable OrbitControls in UV mode so touch goes to raycaster */}
           <OrbitControls
             enablePan={false}
             minDistance={2.5}
@@ -430,13 +432,14 @@ export default function AnalysisView({ onBack }: Props) {
           className={`tool-btn ${uvOn ? "active" : ""}`}
           onClick={() => setUvOn(!uvOn)}
         >
-          <span className="tool-icon">🔦</span>
-          <span>Lampe UV</span>
+          <span className="tool-icon">{uvOn ? "◉" : "◎"}</span>
+          <span>LAMPE UV</span>
         </button>
 
         {uvOn && (
           <div className="trace-counter">
-            {foundCount}/{TRACES.length} traces
+            <span className="counter-label">TRACES</span>
+            <span className="counter-value">{foundCount}/{TRACES.length}</span>
           </div>
         )}
       </div>
@@ -445,15 +448,14 @@ export default function AnalysisView({ onBack }: Props) {
         <div className="uv-indicator">
           <span className="uv-dot" />
           {foundCount === 0
-            ? "Balayez la tasse avec le doigt"
-            : `${foundCount}/${TRACES.length} traces biologiques détectées`}
+            ? "BALAYEZ LA SURFACE AVEC LE DOIGT"
+            : `${foundCount}/${TRACES.length} TRACES BIOLOGIQUES DETECTEES`}
         </div>
       )}
 
       {!uvOn && !showReport && (
         <div className="instructions">
-          Faites glisser pour tourner • Activez la lampe UV pour révéler les
-          traces
+          FAIRE GLISSER POUR TOURNER — ACTIVER LA LAMPE UV POUR ANALYSER
         </div>
       )}
 
@@ -461,21 +463,23 @@ export default function AnalysisView({ onBack }: Props) {
       {showReport && (
         <div className="report-overlay">
           <div className="report-card">
+            <div className="report-stripe" />
             <div className="report-header">
-              <span className="report-badge">CONFIDENTIEL</span>
-              <h3>Rapport d'analyse scientifique</h3>
-              <p className="report-ref">
-                Indice : Tasse de cafe — Ref. SC-2024-0847
-              </p>
+              <div className="report-badge-row">
+                <span className="report-badge">CONFIDENTIEL</span>
+                <span className="report-badge report-badge-blue">LABO. CRIMINALISTIQUE</span>
+              </div>
+              <h3>RAPPORT D'ANALYSE</h3>
+              <div className="report-meta">
+                <span>Ref. SC-2024-0847</span>
+                <span>Piece : Tasse de cafe</span>
+              </div>
             </div>
 
             <div className="report-body">
               {TRACES.map((trace, i) => (
                 <div key={i} className="report-row">
-                  <div className="report-row-icon">
-                    {trace.label.includes("ADN") ? "🧬" :
-                     trace.label.includes("Empreinte") ? "🔍" : "🧪"}
-                  </div>
+                  <div className="report-row-num">{String(i + 1).padStart(2, "0")}</div>
                   <div className="report-row-content">
                     <span className="report-row-label">{trace.reportLabel}</span>
                     <span className="report-row-value">{trace.reportValue}</span>
@@ -485,9 +489,11 @@ export default function AnalysisView({ onBack }: Props) {
             </div>
 
             <div className="report-footer">
-              <p>Comparez ces resultats avec le dossier suspect.</p>
+              <p className="report-instruction">
+                COMPAREZ CES RESULTATS AVEC LE DOSSIER SUSPECT
+              </p>
               <button className="report-close-btn" onClick={() => setShowReport(false)}>
-                Fermer le rapport
+                FERMER LE RAPPORT
               </button>
             </div>
           </div>

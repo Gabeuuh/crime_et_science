@@ -124,9 +124,11 @@ function GlowSpot({
           depthWrite={false}
         />
       </mesh>
-      <Html position={[0, scale + 0.2, 0]} center>
-        <div className="trace-label">{label}</div>
-      </Html>
+      {label && (
+        <Html position={[0, scale + 0.2, 0]} center>
+          <div className="trace-label">{label}</div>
+        </Html>
+      )}
     </group>
   );
 }
@@ -182,9 +184,11 @@ function ScanTrail({
 function Cup({
   uvOn,
   onFoundCountChange,
+  hideLabels,
 }: {
   uvOn: boolean;
   onFoundCountChange: (count: number) => void;
+  hideLabels: boolean;
 }) {
   const cupMeshRef = useRef<THREE.Mesh>(null);
   const handleMeshRef = useRef<THREE.Mesh>(null);
@@ -344,7 +348,7 @@ function Cup({
                 key={i}
                 position={trace.position}
                 scale={trace.scale}
-                label={trace.label}
+                label={hideLabels ? "" : trace.label}
               />
             )
         )}
@@ -397,7 +401,7 @@ export default function AnalysisView({ onBack }: Props) {
             intensity={uvOn ? 0.01 : 0.3}
           />
 
-          <Cup uvOn={uvOn} onFoundCountChange={setFoundCount} />
+          <Cup uvOn={uvOn} onFoundCountChange={setFoundCount} hideLabels={showReport} />
 
           <gridHelper
             args={[

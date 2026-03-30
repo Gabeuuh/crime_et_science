@@ -81,7 +81,7 @@ function matchToTarget(
 type ScanState = "loading" | "idle" | "scanning" | "found";
 
 interface Props {
-  onAnalyze: () => void;
+  onAnalyze: (objectId: string) => void;
 }
 
 export default function ScanView({ onAnalyze }: Props) {
@@ -246,11 +246,9 @@ export default function ScanView({ onAnalyze }: Props) {
               <p className="confidence-text">
                 Confiance : {Math.round(result.confidence * 100)}%
               </p>
-              {result.targetObject.id === "tasse" && (
-                <button className="analyze-btn" onClick={onAnalyze}>
-                  🔬 Analyser l'indice
-                </button>
-              )}
+              <button className="analyze-btn" onClick={() => onAnalyze(result.targetObject!.id)}>
+                🔬 Analyser l'indice
+              </button>
               <button className="retry-btn" onClick={reset}>
                 Nouveau scan
               </button>

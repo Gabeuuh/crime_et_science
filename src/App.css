@@ -9,6 +9,100 @@
 }
 
 /* ═══════════════════════════════════════════
+   DEBUG MODE
+   ═══════════════════════════════════════════ */
+.debug-fab {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 100;
+  padding: 8px 16px;
+  border: 2px solid #f59e0b;
+  border-radius: 6px;
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  font-family: "Courier New", monospace;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.debug-fab:active {
+  transform: scale(0.95);
+}
+
+.debug-panel {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #0a1122;
+}
+
+.debug-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  background: #0d1526;
+  border-bottom: 2px solid #f59e0b;
+}
+
+.debug-header h2 {
+  font-family: "Courier New", monospace;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #f59e0b;
+  letter-spacing: 3px;
+  margin: 0;
+}
+
+.debug-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 16px;
+  overflow-y: auto;
+  align-content: start;
+}
+
+.debug-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px 12px;
+  border: 1px solid #1e3a5f;
+  border-radius: 8px;
+  background: rgba(37, 99, 235, 0.06);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.debug-card:active {
+  transform: scale(0.96);
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.debug-card-icon {
+  font-size: 2.4rem;
+}
+
+.debug-card-name {
+  font-family: "Courier New", monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════
    SCAN VIEW
    ═══════════════════════════════════════════ */
 .scan-view {
@@ -562,6 +656,41 @@
   box-shadow: 0 0 16px rgba(124, 58, 237, 0.2);
 }
 
+.tool-btn.ir.active {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.2);
+}
+
+.tool-btn.esda.active {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.2);
+}
+
+.tool-btn.loupe.active {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fcd34d;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.2);
+}
+
+.tool-btn.marquis.active {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fcd34d;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.2);
+}
+
+.tool-btn.powder.active {
+  border-color: #6b8db5;
+  background: rgba(107, 141, 181, 0.15);
+  color: #93c5fd;
+  box-shadow: 0 0 16px rgba(107, 141, 181, 0.2);
+}
+
 .tool-icon {
   font-size: 1rem;
 }
@@ -848,4 +977,69 @@
 .report-close-btn:active {
   transform: scale(0.97);
   background: rgba(37, 99, 235, 0.2);
+}
+
+/* ═══════════════════════════════════════════
+   ESDA — Revealed text impressions
+   ═══════════════════════════════════════════ */
+.esda-text {
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: #66aaff;
+  text-shadow: 0 0 8px rgba(102, 170, 255, 0.6);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: 1px;
+  animation: esda-appear 0.8s ease-out;
+  font-style: italic;
+}
+
+@keyframes esda-appear {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ═══════════════════════════════════════════
+   MARQUIS — Reference color chart
+   ═══════════════════════════════════════════ */
+.marquis-chart {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 10px 14px;
+  background: rgba(10, 17, 34, 0.92);
+  border: 1px solid #1e3a5f;
+  border-radius: 4px;
+  z-index: 10;
+  animation: fade-in 0.4s ease-out;
+}
+
+.marquis-chart-title {
+  font-family: "Courier New", monospace;
+  font-size: 0.55rem;
+  font-weight: 800;
+  color: #f5c542;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.marquis-chart-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+  font-family: "Courier New", monospace;
+  font-size: 0.6rem;
+  color: #8aa0b8;
+  letter-spacing: 0.5px;
+}
+
+.marquis-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }

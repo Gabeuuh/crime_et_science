@@ -209,7 +209,6 @@ function ReferenceChart() {
 function Scene({
   pipetteOn,
   onFoundCountChange,
-  hideLabels,
 }: {
   pipetteOn: boolean;
   onFoundCountChange: (count: number) => void;

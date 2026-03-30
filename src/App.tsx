@@ -8,7 +8,7 @@ import SomniferesAnalysis from "./components/SomniferesAnalysis";
 import SerrureAnalysis from "./components/SerrureAnalysis";
 import "./App.css";
 
-const DEBUG = import.meta.env.DEV;
+const DEBUG = new URLSearchParams(window.location.search).has("debug");
 
 const DEBUG_OBJECTS = [
   { id: "tasse", name: "Tasse de café", icon: "☕" },

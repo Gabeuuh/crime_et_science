@@ -62,7 +62,7 @@ export default function ManuelAnalysis({ onBack }: { onBack: () => void }) {
     const container = containerRef.current;
     if (!container) return;
 
-    NOTES.forEach((note, i) => {
+    NOTES.forEach((_note, i) => {
       const canvas = canvasRefs.current[i];
       if (!canvas) return;
       const noteEl = canvas.parentElement;

@@ -246,11 +246,13 @@ function SlotPiece({
 
 /* ═══════════════════════════════════════════════════ */
 
-export default function DictaphoneAnalysis({
-  onBack,
-}: {
+interface Props {
   onBack: () => void;
-}) {
+  onCollectClue?: () => void;
+  isCollected?: boolean;
+}
+
+export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected }: Props) {
   const [pool, setPool] = useState<number[]>(INITIAL_POOL);
   const [slots, setSlots] = useState<(number | null)[]>([
     null, null, null, null, null,
@@ -616,6 +618,16 @@ export default function DictaphoneAnalysis({
               <p className="report-instruction">
                 CONCLUSION : PREUVE DE PREMEDITATION — ESPIONNAGE INDUSTRIEL
               </p>
+              {!isCollected ? (
+                <button
+                  className="collect-clue-btn"
+                  onClick={() => onCollectClue?.()}
+                >
+                  COLLECTER L'INDICE
+                </button>
+              ) : (
+                <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+              )}
               <button
                 className="report-close-btn"
                 onClick={() => setShowReport(false)}

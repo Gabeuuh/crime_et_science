@@ -47,7 +47,13 @@ const NOTES = [
 const SCRATCH_RADIUS = 20;
 const REVEAL_THRESHOLD = 0.6;
 
-export default function ManuelAnalysis({ onBack }: { onBack: () => void }) {
+interface Props {
+  onBack: () => void;
+  onCollectClue?: () => void;
+  isCollected?: boolean;
+}
+
+export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: Props) {
   const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const [heatOn, setHeatOn] = useState(false);
@@ -352,6 +358,16 @@ export default function ManuelAnalysis({ onBack }: { onBack: () => void }) {
               <p className="report-instruction">
                 CONCLUSION : L'EQUIPAGE A EVACUE PAR LES CAPSULES DE SECOURS
               </p>
+              {!isCollected ? (
+                <button
+                  className="collect-clue-btn"
+                  onClick={() => onCollectClue?.()}
+                >
+                  COLLECTER L'INDICE
+                </button>
+              ) : (
+                <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+              )}
               <button
                 className="report-close-btn"
                 onClick={() => setShowReport(false)}

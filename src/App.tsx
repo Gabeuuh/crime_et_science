@@ -5,6 +5,7 @@ import AlarmeAnalysis from "./components/AlarmeAnalysis";
 import DictaphoneAnalysis from "./components/DictaphoneAnalysis";
 import CameraAnalysis from "./components/CameraAnalysis";
 import CleUSBAnalysis from "./components/CleUSBAnalysis";
+import CarnetView from "./components/CarnetView";
 import "./App.css";
 
 const DEBUG = new URLSearchParams(window.location.search).has("debug");
@@ -17,18 +18,21 @@ const DEBUG_OBJECTS = [
   { id: "usb", name: "Clé USB", icon: "🔑" },
 ];
 
+const TOTAL_CLUES = 4;
+
 type View = "scan" | "analysis" | "debug";
 
 function App() {
   const [view, setView] = useState<View>("scan");
   const [objectId, setObjectId] = useState<string | null>(null);
+  const [fromDebug, setFromDebug] = useState(false);
+  const [showCarnet, setShowCarnet] = useState(false);
+  const [collectedClues, setCollectedClues] = useState<Set<string>>(new Set());
 
   const handleAnalyze = (id: string) => {
     setObjectId(id);
     setView("analysis");
   };
-
-  const [fromDebug, setFromDebug] = useState(false);
 
   const handleBack = () => {
     setView(fromDebug ? "debug" : "scan");
@@ -36,14 +40,54 @@ function App() {
     setFromDebug(false);
   };
 
+  const handleCollectClue = (gameId: string) => {
+    setCollectedClues((prev) => new Set([...prev, gameId]));
+  };
+
   const renderAnalysis = () => {
     switch (objectId) {
-      case "manuel": return <ManuelAnalysis onBack={handleBack} />;
-      case "alarme": return <AlarmeAnalysis onBack={handleBack} />;
-      case "dictaphone": return <DictaphoneAnalysis onBack={handleBack} />;
-      case "camera": return <CameraAnalysis onBack={handleBack} />;
-      case "usb": return <CleUSBAnalysis onBack={handleBack} />;
-      default: return <ManuelAnalysis onBack={handleBack} />;
+      case "manuel":
+        return (
+          <ManuelAnalysis
+            onBack={handleBack}
+            onCollectClue={() => handleCollectClue("manuel")}
+            isCollected={collectedClues.has("manuel")}
+          />
+        );
+      case "alarme":
+        return (
+          <AlarmeAnalysis
+            onBack={handleBack}
+            onCollectClue={() => handleCollectClue("alarme")}
+            isCollected={collectedClues.has("alarme")}
+          />
+        );
+      case "dictaphone":
+        return (
+          <DictaphoneAnalysis
+            onBack={handleBack}
+            onCollectClue={() => handleCollectClue("dictaphone")}
+            isCollected={collectedClues.has("dictaphone")}
+          />
+        );
+      case "camera":
+        return (
+          <CameraAnalysis
+            onBack={handleBack}
+            onCollectClue={() => handleCollectClue("camera")}
+            isCollected={collectedClues.has("camera")}
+          />
+        );
+      case "usb":
+        return <CleUSBAnalysis onBack={handleBack} />;
+      default:
+        return (
+          <ManuelAnalysis
+            onBack={handleBack}
+            onCollectClue={() => handleCollectClue("manuel")}
+            isCollected={collectedClues.has("manuel")}
+          />
+        );
     }
   };
 
@@ -76,6 +120,27 @@ function App() {
         </div>
       )}
       {view === "analysis" && renderAnalysis()}
+
+      {/* ── Carnet FAB ── */}
+      <button
+        className="carnet-fab"
+        onClick={() => setShowCarnet(true)}
+        aria-label="Ouvrir le carnet d'indices"
+      >
+        <span className="carnet-fab-icon">📓</span>
+        <span className="carnet-fab-label">CARNET</span>
+        <span className={`carnet-fab-badge ${collectedClues.size === TOTAL_CLUES ? "complete" : ""}`}>
+          {collectedClues.size}/{TOTAL_CLUES}
+        </span>
+      </button>
+
+      {/* ── Carnet modal ── */}
+      {showCarnet && (
+        <CarnetView
+          onClose={() => setShowCarnet(false)}
+          collectedClues={collectedClues}
+        />
+      )}
     </div>
   );
 }

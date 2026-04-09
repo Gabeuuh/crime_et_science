@@ -18,7 +18,13 @@ const VIDEO_SRC = "/video-surveillance.mp4";
 
 type Phase = "viewing" | "quiz1" | "quiz2" | "done";
 
-export default function CameraAnalysis({ onBack }: { onBack: () => void }) {
+interface Props {
+  onBack: () => void;
+  onCollectClue?: () => void;
+  isCollected?: boolean;
+}
+
+export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: Props) {
   const [zoom, setZoom] = useState(1);
   const [phase, setPhase] = useState<Phase>("viewing");
   const [attempts1, setAttempts1] = useState(0);
@@ -364,6 +370,16 @@ export default function CameraAnalysis({ onBack }: { onBack: () => void }) {
                 CONCLUSION : FONTAINE DECOUVERTE PAR AUBERT — ALARME DECLENCHEE
                 DANS LA PANIQUE
               </p>
+              {!isCollected ? (
+                <button
+                  className="collect-clue-btn"
+                  onClick={() => onCollectClue?.()}
+                >
+                  COLLECTER L'INDICE
+                </button>
+              ) : (
+                <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+              )}
               <button
                 className="report-close-btn"
                 onClick={() => setShowReport(false)}

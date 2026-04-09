@@ -47,7 +47,13 @@ const REVEAL_THRESHOLD = 0.55;
 
 type Phase = "sweep" | "match" | "done";
 
-export default function AlarmeAnalysis({ onBack }: { onBack: () => void }) {
+interface Props {
+  onBack: () => void;
+  onCollectClue?: () => void;
+  isCollected?: boolean;
+}
+
+export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: Props) {
   const [uvOn, setUvOn] = useState(false);
   const [fingerprintRevealed, setFingerprintRevealed] = useState(false);
   const [phase, setPhase] = useState<Phase>("sweep");
@@ -457,6 +463,16 @@ export default function AlarmeAnalysis({ onBack }: { onBack: () => void }) {
               <p className="report-instruction">
                 CONCLUSION : FAUSSE ALARME DECLENCHEE PAR LEA FONTAINE
               </p>
+              {!isCollected ? (
+                <button
+                  className="collect-clue-btn"
+                  onClick={() => onCollectClue?.()}
+                >
+                  COLLECTER L'INDICE
+                </button>
+              ) : (
+                <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+              )}
               <button
                 className="report-close-btn"
                 onClick={() => setShowReport(false)}

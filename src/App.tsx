@@ -6,6 +6,7 @@ import DictaphoneAnalysis from "./components/DictaphoneAnalysis";
 import CameraAnalysis from "./components/CameraAnalysis";
 import CleUSBAnalysis from "./components/CleUSBAnalysis";
 import CarnetView from "./components/CarnetView";
+import CarnetAnalysis from "./components/CarnetAnalysis";
 import "./App.css";
 
 const DEBUG = new URLSearchParams(window.location.search).has("debug");
@@ -80,6 +81,8 @@ function App() {
         );
       case "usb":
         return <CleUSBAnalysis onBack={handleBack} />;
+      case "carnet":
+        return <CarnetAnalysis onBack={handleBack} />;
       default:
         return (
           <ManuelAnalysis

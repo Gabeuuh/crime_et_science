@@ -1,81 +1,30 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import "@tensorflow/tfjs";
-import * as mobilenet from "@tensorflow-models/mobilenet";
+import * as tmImage from "@teachablemachine/image";
+
+const MODEL_URL = "/model/tm-my-image-model/";
 
 interface TargetObject {
   id: string;
   name: string;
   icon: string;
-  keywords: string[];
 }
 
-const TARGET_OBJECTS: TargetObject[] = [
-  {
-    id: "passeport",
-    name: "Passeport",
-    icon: "🛂",
-    keywords: ["envelope", "wallet", "book jacket", "binder", "id card"],
-  },
-  {
-    id: "tasse",
-    name: "Tasse de café",
-    icon: "☕",
-    keywords: ["coffee mug", "cup", "espresso", "mug", "pitcher"],
-  },
-  {
-    id: "carnet",
-    name: "Carnet",
-    icon: "📓",
-    keywords: ["notebook", "book", "diary", "binder", "menu", "packet"],
-  },
-  {
-    id: "photo",
-    name: "Photo",
-    icon: "📷",
-    keywords: ["picture frame", "jigsaw puzzle", "comic book", "album"],
-  },
-  {
-    id: "somniferes",
-    name: "Somnifères",
-    icon: "💊",
-    keywords: ["pill bottle", "medicine chest", "bottlecap", "medicine", "vial", "pop bottle"],
-  },
-  {
-    id: "serrure",
-    name: "Serrure",
-    icon: "🔒",
-    keywords: ["padlock", "combination lock", "safe", "lock", "buckle"],
-  },
-];
+/* Map Teachable Machine labels → analysis IDs */
+const LABEL_MAP: Record<string, TargetObject> = {
+  "alarme-incendie": { id: "alarme",     name: "Boîtier d'alarme",     icon: "🚨" },
+  "cassette":        { id: "dictaphone", name: "Dictaphone",            icon: "🎙️" },
+  "disque-dur":      { id: "usb",        name: "Clé USB",               icon: "🔑" },
+  "camera":          { id: "camera",     name: "Caméra surveillance",   icon: "📹" },
+  "carnet":          { id: "carnet",     name: "Carnet",                icon: "📓" },
+};
+
+const CONFIDENCE_THRESHOLD = 0.75;
 
 interface DetectionResult {
   targetObject: TargetObject | null;
   confidence: number;
-  rawPrediction: string;
-}
-
-function matchToTarget(
-  predictions: Array<{ className: string; probability: number }>
-): DetectionResult {
-  for (const pred of predictions) {
-    const classLower = pred.className.toLowerCase();
-    for (const target of TARGET_OBJECTS) {
-      for (const keyword of target.keywords) {
-        if (classLower.includes(keyword)) {
-          return {
-            targetObject: target,
-            confidence: pred.probability,
-            rawPrediction: pred.className,
-          };
-        }
-      }
-    }
-  }
-  return {
-    targetObject: null,
-    confidence: predictions[0]?.probability ?? 0,
-    rawPrediction: predictions[0]?.className ?? "inconnu",
-  };
+  rawLabel: string;
 }
 
 type ScanState = "loading" | "idle" | "scanning" | "found";
@@ -86,18 +35,19 @@ interface Props {
 
 export default function ScanView({ onAnalyze }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [model, setModel] = useState<mobilenet.MobileNet | null>(null);
+  const [model, setModel] = useState<tmImage.CustomMobileNet | null>(null);
   const [scanState, setScanState] = useState<ScanState>("loading");
   const [result, setResult] = useState<DetectionResult | null>(null);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  // Load MobileNet model
+  // Load Teachable Machine model
   useEffect(() => {
     let cancelled = false;
-    mobilenet
-      .load({ version: 2, alpha: 1.0 })
-      .then((m) => {
+    Promise.all([
+      tmImage.load(MODEL_URL + "model.json", MODEL_URL + "metadata.json"),
+    ])
+      .then(([m]) => {
         if (!cancelled) {
           setModel(m);
           setScanState("idle");
@@ -106,23 +56,16 @@ export default function ScanView({ onAnalyze }: Props) {
       .catch(() => {
         if (!cancelled) setError("Erreur chargement du modèle IA.");
       });
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   // Start camera
   useEffect(() => {
     let stream: MediaStream | null = null;
-
     const start = async () => {
       try {
         stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: "environment",
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-          },
+          video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
         });
       } catch {
         try {
@@ -134,11 +77,8 @@ export default function ScanView({ onAnalyze }: Props) {
       }
       if (videoRef.current) videoRef.current.srcObject = stream;
     };
-
     start();
-    return () => {
-      stream?.getTracks().forEach((t) => t.stop());
-    };
+    return () => { stream?.getTracks().forEach((t) => t.stop()); };
   }, []);
 
   // Animated progress counter during scan
@@ -161,11 +101,25 @@ export default function ScanView({ onAnalyze }: Props) {
     setResult(null);
 
     const minDelay = new Promise((r) => setTimeout(r, 2500));
-    const classifyPromise = model.classify(videoRef.current, 5);
 
     try {
-      const [predictions] = await Promise.all([classifyPromise, minDelay]);
-      const detection = matchToTarget(predictions);
+      const [predictions] = await Promise.all([
+        model.predict(videoRef.current),
+        minDelay,
+      ]);
+
+      // Find best prediction
+      const best = predictions.reduce((a, b) =>
+        a.probability > b.probability ? a : b
+      );
+
+      const target = LABEL_MAP[best.className] ?? null;
+      const detection: DetectionResult = {
+        targetObject: best.probability >= CONFIDENCE_THRESHOLD ? target : null,
+        confidence: best.probability,
+        rawLabel: best.className,
+      };
+
       setProgress(100);
       await new Promise((r) => setTimeout(r, 400));
       setResult(detection);
@@ -224,7 +178,7 @@ export default function ScanView({ onAnalyze }: Props) {
           </div>
           <div className="hud-details">
             <span>RÉS. OPTIQUE: 1280×720</span>
-            <span>MODÈLE: MobileNet v2</span>
+            <span>MODÈLE: Custom TM v2</span>
           </div>
         </div>
       )}
@@ -257,7 +211,7 @@ export default function ScanView({ onAnalyze }: Props) {
             <>
               <span className="result-icon">❓</span>
               <h2>Objet non identifié</h2>
-              <p className="raw-label">Détecté : {result.rawPrediction}</p>
+              <p className="raw-label">Détecté : {result.rawLabel} ({Math.round(result.confidence * 100)}%)</p>
               <button className="retry-btn" onClick={reset}>
                 Réessayer
               </button>

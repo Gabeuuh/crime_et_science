@@ -3,7 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Html } from "@react-three/drei";
 import * as THREE from "three";
 
-/* ── Pills data — Marquis reagent test results ── */
+/* ── Pills data - Marquis reagent test results ── */
 interface Pill {
   position: [number, number, number];
   originalColor: string;
@@ -21,8 +21,8 @@ const PILLS: Pill[] = [
     reagentColor: "#6b21a8",
     substance: "Benzodiazépine",
     label: "Violet → Benzodiazépine",
-    reportLabel: "Comprimé #1 — Test de Marquis",
-    reportValue: "Réaction violette/pourpre — Benzodiazépine détectée (non conforme à l'étiquetage \"somnifère naturel\")",
+    reportLabel: "Comprimé #1 - Test de Marquis",
+    reportValue: "Réaction violette/pourpre - Benzodiazépine détectée (non conforme à l'étiquetage \"somnifère naturel\")",
   },
   {
     position: [0.3, 0.1, 0.5],
@@ -30,8 +30,8 @@ const PILLS: Pill[] = [
     reagentColor: "#ea580c",
     substance: "Amphétamine",
     label: "Orange → Amphétamine",
-    reportLabel: "Comprimé #2 — Test de Marquis",
-    reportValue: "Réaction orange vif — Amphétamine/MDMA détectée. Substance incompatible avec un somnifère",
+    reportLabel: "Comprimé #2 - Test de Marquis",
+    reportValue: "Réaction orange vif - Amphétamine/MDMA détectée. Substance incompatible avec un somnifère",
   },
   {
     position: [0.6, 0.1, -0.1],
@@ -39,8 +39,8 @@ const PILLS: Pill[] = [
     reagentColor: "#e8e0d0",
     substance: "Placebo",
     label: "Aucune réaction → Placebo",
-    reportLabel: "Comprimé #3 — Test de Marquis",
-    reportValue: "Aucune réaction colorimétrique — substance inerte (lactose/amidon). Comprimé placebo",
+    reportLabel: "Comprimé #3 - Test de Marquis",
+    reportValue: "Aucune réaction colorimétrique - substance inerte (lactose/amidon). Comprimé placebo",
   },
   {
     position: [-0.4, 0.1, -0.3],
@@ -48,8 +48,8 @@ const PILLS: Pill[] = [
     reagentColor: "#1d4ed8",
     substance: "Opioïde",
     label: "Bleu → Opioïde",
-    reportLabel: "Comprimé #4 — Test de Marquis",
-    reportValue: "Réaction bleu foncé — Opioïde de synthèse (type fentanyl). Substance contrôlée, hautement dangereuse",
+    reportLabel: "Comprimé #4 - Test de Marquis",
+    reportValue: "Réaction bleu foncé - Opioïde de synthèse (type fentanyl). Substance contrôlée, hautement dangereuse",
   },
 ];
 
@@ -296,7 +296,7 @@ export default function SomniferesAnalysis({ onBack }: { onBack: () => void }) {
           <span className="header-dept">POLICE SCIENTIFIQUE</span>
           <span className="header-case">Affaire #2024-0847</span>
         </div>
-        <span className="evidence-tag">PIECE A CONV. — SOMNIFERES</span>
+        <span className="evidence-tag">PIECE A CONV. - SOMNIFERES</span>
       </header>
 
       <div className="canvas-container">
@@ -368,7 +368,7 @@ export default function SomniferesAnalysis({ onBack }: { onBack: () => void }) {
               ))}
             </div>
             <div className="report-footer">
-              <p className="report-instruction">CONCLUSION : MEDICAMENTS CONTREFAITS — SUBSTANCES CONTROLEES</p>
+              <p className="report-instruction">CONCLUSION : MEDICAMENTS CONTREFAITS - SUBSTANCES CONTROLEES</p>
               <button className="report-close-btn" onClick={() => setShowReport(false)}>FERMER LE RAPPORT</button>
             </div>
           </div>

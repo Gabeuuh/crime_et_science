@@ -30,9 +30,9 @@ const TRACES: TraceData[] = [
       { label: "Pied de biche", correct: false },
       { label: "Pince coupante", correct: false },
     ],
-    reportLabel: "Stries parallèles — entrée de serrure",
+    reportLabel: "Stries parallèles - entrée de serrure",
     reportValue:
-      "Stries parallèles espacées de 0.8mm — compatibles avec tournevis plat 6mm. Angle d'insertion : 15°",
+      "Stries parallèles espacées de 0.8mm - compatibles avec tournevis plat 6mm. Angle d'insertion : 15°",
   },
   {
     position: [0.25, 1.1, 0.15],
@@ -46,7 +46,7 @@ const TRACES: TraceData[] = [
     ],
     reportLabel: "Déformation mécanique du pêne",
     reportValue:
-      "Pêne demi-tour déformé de 2mm — force estimée 150N appliquée latéralement. Effraction par outil levier",
+      "Pêne demi-tour déformé de 2mm - force estimée 150N appliquée latéralement. Effraction par outil levier",
   },
   {
     position: [-0.2, 0.3, 0.28],
@@ -60,7 +60,7 @@ const TRACES: TraceData[] = [
     ],
     reportLabel: "Résidus métalliques étrangers",
     reportValue:
-      "Particules d'acier au chrome (inox) — métal différent du laiton de la serrure. Provenance : outil professionnel",
+      "Particules d'acier au chrome (inox) - métal différent du laiton de la serrure. Provenance : outil professionnel",
   },
   {
     position: [0.15, 0.85, 0.25],
@@ -74,7 +74,7 @@ const TRACES: TraceData[] = [
     ],
     reportLabel: "Analyse d'usure du cylindre",
     reportValue:
-      "Aucune trace d'usure normale de clé — serrure jamais utilisée avec sa clé légitime avant l'effraction",
+      "Aucune trace d'usure normale de clé - serrure jamais utilisée avec sa clé légitime avant l'effraction",
   },
 ];
 
@@ -407,7 +407,7 @@ function QuizModal({
           ))}
         </div>
         {result === "wrong" && (
-          <p className="quiz-feedback wrong">Incorrect — réessayez</p>
+          <p className="quiz-feedback wrong">Incorrect - réessayez</p>
         )}
         {result === "correct" && (
           <p className="quiz-feedback correct">
@@ -476,7 +476,7 @@ export default function SerrureAnalysis({ onBack }: { onBack: () => void }) {
           <span className="header-dept">POLICE SCIENTIFIQUE</span>
           <span className="header-case">Affaire #2024-0847</span>
         </div>
-        <span className="evidence-tag">PIECE A CONV. — SERRURE</span>
+        <span className="evidence-tag">PIECE A CONV. - SERRURE</span>
       </header>
 
       <div className="canvas-container">
@@ -597,7 +597,7 @@ export default function SerrureAnalysis({ onBack }: { onBack: () => void }) {
             </div>
             <div className="report-footer">
               <p className="report-instruction">
-                CONCLUSION : EFFRACTION CONFIRMEE — OUTIL PROFESSIONNEL
+                CONCLUSION : EFFRACTION CONFIRMEE - OUTIL PROFESSIONNEL
               </p>
               <button
                 className="report-close-btn"

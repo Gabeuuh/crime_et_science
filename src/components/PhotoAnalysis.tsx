@@ -11,13 +11,13 @@ const MODE_LABELS: Record<FilterMode, string> = {
 };
 
 const MODE_DESCRIPTIONS: Record<FilterMode, string> = {
-  normal: "Vue standard — cherchez les anomalies visibles",
-  ela: "Error Level Analysis — zones retouchées en surbrillance",
-  niveaux: "Egalisation — révèle les incohérences d'éclairage",
-  exif: "Métadonnées — informations cachées du fichier",
+  normal: "Vue standard - cherchez les anomalies visibles",
+  ela: "Error Level Analysis - zones retouchées en surbrillance",
+  niveaux: "Egalisation - révèle les incohérences d'éclairage",
+  exif: "Métadonnées - informations cachées du fichier",
 };
 
-/* ── Anomalies — each visible only in a specific mode ── */
+/* ── Anomalies - each visible only in a specific mode ── */
 const ANOMALIES = [
   {
     id: 0,
@@ -30,7 +30,7 @@ const ANOMALIES = [
     hint: "Regardez dans le miroir...",
     reportLabel: "Reflet dans le miroir",
     reportValue:
-      "Silhouette humaine visible dans le reflet du miroir — personne non déclarée sur les lieux au moment de la prise de vue",
+      "Silhouette humaine visible dans le reflet du miroir - personne non déclarée sur les lieux au moment de la prise de vue",
   },
   {
     id: 1,
@@ -43,7 +43,7 @@ const ANOMALIES = [
     hint: "Compression JPEG incohérente...",
     reportLabel: "Analyse ELA (Error Level Analysis)",
     reportValue:
-      "Zone de compression JPEG hétérogène — retouche numérique détectée sur le visage du sujet, artefacts de clonage",
+      "Zone de compression JPEG hétérogène - retouche numérique détectée sur le visage du sujet, artefacts de clonage",
   },
   {
     x: 12,
@@ -56,7 +56,7 @@ const ANOMALIES = [
     hint: "Direction d'éclairage suspecte...",
     reportLabel: "Analyse des ombres portées",
     reportValue:
-      "Deux directions d'ombre incompatibles — indique un montage ou un éclairage artificiel ajouté",
+      "Deux directions d'ombre incompatibles - indique un montage ou un éclairage artificiel ajouté",
   },
   {
     id: 3,
@@ -69,7 +69,7 @@ const ANOMALIES = [
     hint: "Les métadonnées ne correspondent pas...",
     reportLabel: "Métadonnées EXIF",
     reportValue:
-      "Timestamp EXIF : 2024-03-15 02:34 — incohérent avec luminosité ambiante (plein jour). Logiciel de retouche détecté dans le champ Software",
+      "Timestamp EXIF : 2024-03-15 02:34 - incohérent avec luminosité ambiante (plein jour). Logiciel de retouche détecté dans le champ Software",
   },
 ];
 
@@ -111,7 +111,7 @@ export default function PhotoAnalysis({ onBack }: { onBack: () => void }) {
           <span className="header-dept">POLICE SCIENTIFIQUE</span>
           <span className="header-case">Affaire #2024-0847</span>
         </div>
-        <span className="evidence-tag">PIECE A CONV. — PHOTO</span>
+        <span className="evidence-tag">PIECE A CONV. - PHOTO</span>
       </header>
 
       <div className="canvas-container">

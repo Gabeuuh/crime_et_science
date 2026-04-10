@@ -1,4 +1,5 @@
 import { useState } from "react";
+import LoginView from "./components/LoginView";
 import ScanView from "./components/ScanView";
 import ManuelAnalysis from "./components/ManuelAnalysis";
 import AlarmeAnalysis from "./components/AlarmeAnalysis";
@@ -13,18 +14,18 @@ const DEBUG = new URLSearchParams(window.location.search).has("debug");
 
 const DEBUG_OBJECTS = [
   { id: "manuel", name: "Manuel de bord", icon: "📖" },
-  { id: "alarme", name: "Boîtier d'alarme", icon: "🚨" },
-  { id: "dictaphone", name: "Dictaphone", icon: "🎙️" },
-  { id: "camera", name: "Caméra surveillance", icon: "📹" },
-  { id: "usb", name: "Clé USB", icon: "🔑" },
+  { id: "alarme", name: "Alarme incendie", icon: "🚨" },
+  { id: "dictaphone", name: "Cassette", icon: "🎙️" },
+  { id: "camera", name: "Caméra", icon: "📹" },
+  { id: "usb", name: "Disque dur", icon: "🔑" },
 ];
 
 const TOTAL_CLUES = 4;
 
-type View = "scan" | "analysis" | "debug";
+type View = "login" | "scan" | "analysis" | "debug";
 
 function App() {
-  const [view, setView] = useState<View>("scan");
+  const [view, setView] = useState<View>("login");
   const [objectId, setObjectId] = useState<string | null>(null);
   const [fromDebug, setFromDebug] = useState(false);
   const [showCarnet, setShowCarnet] = useState(false);
@@ -82,7 +83,13 @@ function App() {
       case "usb":
         return <CleUSBAnalysis onBack={handleBack} />;
       case "carnet":
-        return <CarnetAnalysis onBack={handleBack} />;
+        return (
+          <CarnetAnalysis
+            onBack={handleBack}
+            onCollectClue={() => handleCollectClue("carnet")}
+            isCollected={collectedClues.has("carnet")}
+          />
+        );
       default:
         return (
           <ManuelAnalysis
@@ -96,6 +103,9 @@ function App() {
 
   return (
     <div className="app">
+      {view === "login" && (
+        <LoginView onLogin={() => setView("scan")} />
+      )}
       {view === "scan" && (
         <>
           <ScanView onAnalyze={handleAnalyze} />

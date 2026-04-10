@@ -1,45 +1,33 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import empreinteImg from "../static/empreinte-detoure.png";
 
 /* ── Crew fingerprints for matching ── */
 const CREW_MEMBERS = [
   {
     name: "Cpt. Marc Delaunay",
-    pattern: "Boucle ulnaire droite — 14 minuties",
+    pattern: "Boucle ulnaire droite - 14 minuties",
     match: false,
   },
   {
     name: "Léa Fontaine",
-    pattern: "Verticille double — 11 minuties",
+    pattern: "Verticille double - 11 minuties",
     match: true,
   },
   {
     name: "Dr. Thomas Aubert",
-    pattern: "Arc tente — 9 minuties",
+    pattern: "Arc tente - 9 minuties",
     match: false,
   },
   {
     name: "Ing. Karim Benzara",
-    pattern: "Boucle radiale gauche — 13 minuties",
+    pattern: "Boucle radiale gauche - 13 minuties",
     match: false,
   },
   {
     name: "Lt. Sophie Mercier",
-    pattern: "Verticille simple — 10 minuties",
+    pattern: "Verticille simple - 10 minuties",
     match: false,
   },
-];
-
-/* ── Fingerprint lines as bezier curves ── */
-const FINGERPRINT_LINES = [
-  // Outer ellipses
-  { rx: 35, ry: 45, opacity: 0.7 },
-  { rx: 28, ry: 38, opacity: 0.8 },
-  { rx: 21, ry: 30, opacity: 0.85 },
-  { rx: 14, ry: 22, opacity: 0.9 },
-  { rx: 7, ry: 14, opacity: 1 },
-  // Double whorl offsets
-  { rx: 10, ry: 16, cx: -5, cy: -5, opacity: 0.6 },
-  { rx: 10, ry: 16, cx: 5, cy: -5, opacity: 0.6 },
 ];
 
 const REVEAL_RADIUS = 22;
@@ -69,8 +57,15 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fpAreaRef = useRef<HTMLDivElement>(null);
   const isDrawing = useRef(false);
-  // Track painted pixels with an offscreen canvas
   const maskRef = useRef<HTMLCanvasElement | null>(null);
+  const fpImageRef = useRef<HTMLImageElement | null>(null);
+
+  /* ── Preload fingerprint image ── */
+  useEffect(() => {
+    const img = new Image();
+    img.src = empreinteImg;
+    fpImageRef.current = img;
+  }, []);
 
   /* ── Initialize canvases ── */
   useEffect(() => {
@@ -115,52 +110,25 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
       // Clear and redraw fingerprint using mask
       ctx.clearRect(0, 0, w, h);
 
-      // Draw fingerprint lines clipped by mask
+      // Draw fingerprint image clipped by mask
       ctx.save();
 
-      // Use the mask as a clip — draw the mask shape as a path
-      // We'll use globalCompositeOperation instead
-      // First draw the fingerprint
       const tempCanvas = document.createElement("canvas");
       tempCanvas.width = w;
       tempCanvas.height = h;
       const tempCtx = tempCanvas.getContext("2d")!;
 
-      // Draw fingerprint on temp — fixed pixel size regardless of canvas dimensions
-      const FP_W = 52; // fingerprint width in px
-      const FP_H = 70; // fingerprint height in px
-      tempCtx.strokeStyle = "#88ff88";
-      tempCtx.lineWidth = 1.5;
-      FINGERPRINT_LINES.forEach((line) => {
-        const ox = (line.cx || 0) * (FP_W / 50);
-        const oy = (line.cy || 0) * (FP_H / 60);
-        tempCtx.globalAlpha = line.opacity;
-        tempCtx.beginPath();
-        tempCtx.ellipse(
-          cx + ox,
-          cy + oy,
-          (line.rx / 50) * FP_W,
-          (line.ry / 60) * FP_H,
-          0,
-          0,
-          Math.PI * 2
-        );
-        tempCtx.stroke();
-      });
-      // Top arch
-      tempCtx.globalAlpha = 0.5;
-      tempCtx.beginPath();
-      tempCtx.moveTo(cx - FP_W * 0.7, cy - FP_H * 0.17);
-      tempCtx.quadraticCurveTo(cx, cy - FP_H * 0.4, cx + FP_W * 0.7, cy - FP_H * 0.17);
-      tempCtx.stroke();
-      // Bottom arch
-      tempCtx.beginPath();
-      tempCtx.moveTo(cx - FP_W * 0.75, cy + FP_H * 0.17);
-      tempCtx.quadraticCurveTo(cx, cy + FP_H * 0.4, cx + FP_W * 0.75, cy + FP_H * 0.17);
-      tempCtx.stroke();
-      tempCtx.globalAlpha = 1;
+      // Draw the fingerprint image centered at cx, cy - preserve aspect ratio
+      const img = fpImageRef.current;
+      if (img) {
+        const MAX = 100; // max dimension in px
+        const ratio = img.naturalWidth / img.naturalHeight;
+        const FP_W = ratio >= 1 ? MAX : MAX * ratio;
+        const FP_H = ratio >= 1 ? MAX / ratio : MAX;
+        tempCtx.drawImage(img, cx - FP_W / 2, cy - FP_H / 2, FP_W, FP_H);
+      }
 
-      // Now composite: show fingerprint only where mask is painted
+      // Show image only where mask is painted
       ctx.drawImage(mask, 0, 0);
       ctx.globalCompositeOperation = "source-in";
       ctx.drawImage(tempCanvas, 0, 0);
@@ -174,7 +142,7 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
 
       ctx.restore();
 
-      // Calculate coverage — only within the fingerprint bounding zone
+      // Calculate coverage - only within the fingerprint bounding zone
       const FP_ZONE = 56; // radius around fingerprint center to measure
       const zx = Math.max(0, Math.round(cx - FP_ZONE));
       const zy = Math.max(0, Math.round(cy - FP_ZONE));
@@ -195,10 +163,9 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
       if (painted / total > REVEAL_THRESHOLD && !fingerprintRevealed) {
         setFingerprintRevealed(true);
         navigator.vibrate?.(120);
-        setTimeout(() => setPhase("match"), 1500);
       }
     },
-    [fingerprintRevealed]
+    [fingerprintRevealed, fpImageRef]
   );
 
   /* ── Pointer handlers ── */
@@ -273,7 +240,7 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
           <span className="header-dept">ENQUETE SOUS-MARINE</span>
           <span className="header-case">Mission Abysse-7</span>
         </div>
-        <span className="evidence-tag">INDICE 2 — ALARME</span>
+        <span className="evidence-tag">INDICE 2 - ALARME INCENDIE</span>
       </header>
 
       <div className="canvas-container">
@@ -300,7 +267,7 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
             {/* LED indicator */}
             <div className={`alarme-led ${uvOn ? "active" : ""}`} />
 
-            {/* Fingerprint canvas — revealed progressively by sweep */}
+            {/* Fingerprint canvas - revealed progressively by sweep */}
             {uvOn && (
               <div
                 ref={fpAreaRef}
@@ -326,6 +293,20 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
           <div className="alarme-wire alarme-wire-1" />
           <div className="alarme-wire alarme-wire-2" />
         </div>
+
+        {/* ── Fingerprint zoom overlay ── */}
+        {fingerprintRevealed && phase === "sweep" && (
+          <div className="fp-zoom-overlay">
+            <div className="fp-zoom-card">
+              <div className="fp-zoom-label">EMPREINTE RELEVÉE</div>
+              <img src={empreinteImg} className="fp-zoom-img" alt="empreinte digitale" />
+              <p className="fp-zoom-hint">Comparez avec les dossiers d'équipage</p>
+              <button className="fp-zoom-btn" onClick={() => setPhase("match")}>
+                IDENTIFIER →
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* ── Fingerprint matching panel ── */}
         {phase === "match" && (
@@ -362,12 +343,12 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
             </div>
             {matchResult === "wrong" && (
               <p className="match-feedback wrong">
-                Empreinte non concordante — réessayez
+                Empreinte non concordante - réessayez
               </p>
             )}
             {matchResult === "correct" && (
               <p className="match-feedback correct">
-                CONCORDANCE CONFIRMEE — Léa Fontaine
+                CONCORDANCE CONFIRMEE - Léa Fontaine
               </p>
             )}
           </div>
@@ -431,7 +412,7 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
                     Empreinte sur le déclencheur manuel
                   </span>
                   <span className="report-row-value">
-                    Verticille double — 11 minuties. Concordance : Léa Fontaine
+                    Verticille double - 11 minuties. Concordance : Léa Fontaine
                     (technicienne de navigation)
                   </span>
                 </div>
@@ -443,7 +424,7 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
                     Mode de déclenchement
                   </span>
                   <span className="report-row-value">
-                    Alarme déclenchée manuellement — aucun capteur de fumée n'a
+                    Alarme déclenchée manuellement - aucun capteur de fumée n'a
                     détecté d'incendie avant l'activation
                   </span>
                 </div>
@@ -471,14 +452,16 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
                   COLLECTER L'INDICE
                 </button>
               ) : (
-                <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+                <>
+                  <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+                  <button
+                    className="report-close-btn"
+                    onClick={() => setShowReport(false)}
+                  >
+                    FERMER LE RAPPORT
+                  </button>
+                </>
               )}
-              <button
-                className="report-close-btn"
-                onClick={() => setShowReport(false)}
-              >
-                FERMER LE RAPPORT
-              </button>
             </div>
           </div>
         </div>

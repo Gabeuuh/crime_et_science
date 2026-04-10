@@ -12,11 +12,11 @@ const CLUE_CONCLUSIONS: Record<GameId, string> = {
   manuel:
     "L'équipage a évacué par les capsules de secours suite à l'activation du protocole ECHO-7. Aucun incendie détecté par les capteurs.",
   alarme:
-    "Fausse alarme incendie déclenchée manuellement par Léa Fontaine. Le boîtier porte des traces d'intervention volontaire — aucun incendie réel.",
+    "Fausse alarme incendie déclenchée manuellement par Léa Fontaine. Le boîtier porte des traces d'intervention volontaire - aucun incendie réel.",
   dictaphone:
     "Léa Fontaine était mandatée avant l'embarquement par une entreprise concurrente pour copier les données de cartographie. Préméditation confirmée par enregistrement.",
   camera:
-    "Thomas Aubert a surpris Léa Fontaine dans la salle de navigation. Confrontation directe — alarme déclenchée impulsivement dans la panique.",
+    "Thomas Aubert a surpris Léa Fontaine dans la salle de navigation. Confrontation directe - alarme déclenchée impulsivement dans la panique.",
 };
 
 type Part = string | { blank: string; blocks: number };
@@ -32,9 +32,9 @@ const SECTIONS: { title: string; gameId: GameId; parts: Part[] }[] = [
       { blank: "4", blocks: 1 },
       " membres d'équipage. La mission durait depuis ",
       { blank: "3", blocks: 1 },
-      " semaines quand l'incident s'est produit. Les premiers jours se sont déroulés normalement — mais des tensions internes s'installaient progressivement : pression sur les résultats, fatigue, désaccords sur les décisions. Le sous-marin a été retrouvé intact. L'équipage avait évacué par ",
+      " semaines quand l'incident s'est produit. Les premiers jours se sont déroulés normalement - mais des tensions internes s'installaient progressivement : pression sur les résultats, fatigue, désaccords sur les décisions. Le sous-marin a été retrouvé intact. L'équipage avait évacué par ",
       { blank: "les capsules de secours", blocks: 12 },
-      ", qui se sont dispersées en mer sans navigation ni balise fonctionnelle. L'équipage n'est pas mort — il est ",
+      ", qui se sont dispersées en mer sans navigation ni balise fonctionnelle. L'équipage n'est pas mort - il est ",
       { blank: "perdu en mer", blocks: 12 },
       ".",
     ],
@@ -45,7 +45,7 @@ const SECTIONS: { title: string; gameId: GameId; parts: Part[] }[] = [
     parts: [
       "Au jour 22, tout s'est arrêté brutalement. Les moteurs ont été coupés, la navigation mise hors service, le recyclage d'air sabré. Une alarme ",
       { blank: "incendie", blocks: 12 },
-      " a retenti dans tout le sous-marin. Les premières constatations indiquent que ce déclenchement n'était pas accidentel — le boîtier porte les traces d'une intervention ",
+      " a retenti dans tout le sous-marin. Les premières constatations indiquent que ce déclenchement n'était pas accidentel - le boîtier porte les traces d'une intervention ",
       { blank: "manuelle et volontaire", blocks: 12 },
       ". Les traces relevées sur le déclencheur correspondent au profil de ",
       { blank: "Léa Fontaine, technicienne systèmes embarqués", blocks: 12 },
@@ -80,11 +80,11 @@ const SECTIONS: { title: string; gameId: GameId; parts: Part[] }[] = [
       { blank: "Thomas Aubert", blocks: 12 },
       " a remarqué une anomalie en consultant les logs de navigation. Il a confronté ",
       { blank: "Léa Fontaine", blocks: 12 },
-      " directement, sans en informer la commandante. La caméra du couloir central a tout enregistré — la dispute, la panique, puis ",
+      " directement, sans en informer la commandante. La caméra du couloir central a tout enregistré - la dispute, la panique, puis ",
       { blank: "Léa Fontaine", blocks: 12 },
       " qui se dirige vers le boîtier d'alarme. Ce n'était pas un plan préparé. C'était ",
       { blank: "une réaction de panique", blocks: 12 },
-      " — une décision prise en quelques secondes, sans retour possible.",
+      " - une décision prise en quelques secondes, sans retour possible.",
     ],
   },
 ];
@@ -115,7 +115,7 @@ export default function CarnetView({ onClose, collectedClues }: Props) {
 
         {allCollected && (
           <div className="carnet-complete-banner">
-            ✓ TOUS LES INDICES COLLECTÉS — ENQUÊTE RÉSOLUE
+            ✓ TOUS LES INDICES COLLECTÉS - ENQUÊTE RÉSOLUE
           </div>
         )}
 
@@ -158,7 +158,7 @@ export default function CarnetView({ onClose, collectedClues }: Props) {
                       </p>
                     ) : (
                       <p className="carnet-clue-pending">
-                        — indice non encore collecté —
+                        - indice non encore collecté -
                       </p>
                     )}
                   </div>

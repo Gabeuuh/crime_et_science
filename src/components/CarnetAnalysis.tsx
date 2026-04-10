@@ -8,10 +8,10 @@ const TEXT_ZONES = [
     y: 15,
     w: 76,
     h: 8,
-    text: "RDV 22h — laboratoire",
+    text: "RDV 22h - laboratoire",
     reportLabel: "Indentation ligne 1",
     reportValue:
-      '"RDV 22h — laboratoire" — pression stylo bille forte, écriture rapide',
+      '"RDV 22h - laboratoire" - pression stylo bille forte, écriture rapide',
   },
   {
     x: 12,
@@ -21,7 +21,7 @@ const TEXT_ZONES = [
     text: "augmenter dose ×2",
     reportLabel: "Indentation ligne 2",
     reportValue:
-      '"augmenter dose ×2" — même stylo, traits appuyés sur le ×2',
+      '"augmenter dose ×2" - même stylo, traits appuyés sur le ×2',
   },
   {
     x: 12,
@@ -31,7 +31,7 @@ const TEXT_ZONES = [
     text: "ne rien dire à M.",
     reportLabel: "Indentation ligne 3",
     reportValue:
-      '"ne rien dire à M." — pression réduite, écriture hésitante',
+      '"ne rien dire à M." - pression réduite, écriture hésitante',
   },
   {
     x: 12,
@@ -41,14 +41,14 @@ const TEXT_ZONES = [
     text: "clé cachée sous pot fleurs",
     reportLabel: "Indentation ligne 4",
     reportValue:
-      '"clé cachée sous pot fleurs" — tracé ferme, souligné deux fois',
+      '"clé cachée sous pot fleurs" - tracé ferme, souligné deux fois',
   },
 ];
 
 const SCRATCH_RADIUS = 28;
 const REVEAL_THRESHOLD = 0.45;
 
-export default function CarnetAnalysis({ onBack }: { onBack: () => void }) {
+export default function CarnetAnalysis({ onBack, onCollectClue, isCollected }: { onBack: () => void; onCollectClue?: () => void; isCollected?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [esdaOn, setEsdaOn] = useState(false);
@@ -199,7 +199,7 @@ export default function CarnetAnalysis({ onBack }: { onBack: () => void }) {
           <span className="header-dept">POLICE SCIENTIFIQUE</span>
           <span className="header-case">Affaire #2024-0847</span>
         </div>
-        <span className="evidence-tag">PIECE A CONV. — CARNET</span>
+        <span className="evidence-tag">PIECE A CONV. - CARNET</span>
       </header>
 
       <div className="canvas-container">
@@ -337,12 +337,24 @@ export default function CarnetAnalysis({ onBack }: { onBack: () => void }) {
               <p className="report-instruction">
                 CONCLUSION : MESSAGE PLANIFIANT UNE ACTION SUSPECTE
               </p>
-              <button
-                className="report-close-btn"
-                onClick={() => setShowReport(false)}
-              >
-                FERMER LE RAPPORT
-              </button>
+              {!isCollected ? (
+                <button
+                  className="collect-clue-btn"
+                  onClick={() => onCollectClue?.()}
+                >
+                  COLLECTER L'INDICE
+                </button>
+              ) : (
+                <>
+                  <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+                  <button
+                    className="report-close-btn"
+                    onClick={() => setShowReport(false)}
+                  >
+                    FERMER LE RAPPORT
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

@@ -181,12 +181,12 @@ function SlotPiece({
   const mid = SH / 2 - 6;
 
   const fill = isSuccess
-    ? "rgba(74,222,128,0.18)"
+    ? "rgba(0,210,150,0.18)"
     : isWrong
-    ? "rgba(239,68,68,0.18)"
-    : "rgba(30,58,100,0.6)";
-  const stroke = isSuccess ? "#4ade80" : isWrong ? "#ef4444" : "#3a6a9e";
-  const waveColor = isSuccess ? "#4ade80" : isWrong ? "#ef4444" : "#7c9cbf";
+    ? "rgba(220,60,60,0.14)"
+    : "rgba(255,255,255,0.88)";
+  const stroke = isSuccess ? "rgba(0,190,130,0.70)" : isWrong ? "rgba(200,50,50,0.55)" : "rgba(120,195,240,0.65)";
+  const waveColor = isSuccess ? "#00c890" : isWrong ? "#dc3c3c" : "#00a8e0";
 
   return (
     <svg
@@ -225,7 +225,7 @@ function SlotPiece({
         fontSize="5.5"
         fontFamily="Courier New, monospace"
         fontWeight="700"
-        fill={isSuccess ? "#4ade80" : "#94b4d0"}
+        fill={isSuccess ? "#00a878" : isWrong ? "#cc3030" : "#0070a0"}
         letterSpacing="0.3"
       >
         {seg.speaker.length > 9 ? seg.speaker.slice(0, 9) : seg.speaker}
@@ -236,7 +236,7 @@ function SlotPiece({
         textAnchor="middle"
         fontSize="4.5"
         fontFamily="Courier New, monospace"
-        fill="#4a6a8e"
+        fill="#6aaac8"
       >
         {seg.duration}
       </text>
@@ -364,7 +364,7 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
           <span className="header-dept">ENQUETE SOUS-MARINE</span>
           <span className="header-case">Mission Abysse-7</span>
         </div>
-        <span className="evidence-tag">INDICE 3 — DICTAPHONE</span>
+        <span className="evidence-tag">INDICE 3 - CASSETTE</span>
       </header>
 
       <div className="canvas-container dictaphone-container">
@@ -448,11 +448,11 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
                 const isSelected = selectedPoolIdx === poolIdx;
                 const path = puzzlePath(PW, PH, left, right);
                 const mid = PH / 2 - 8;
-                const wc = isSelected ? "#f59e0b" : "#5a7a9e";
+                const wc = isSelected ? "#e09000" : "#00a0d8";
                 const fill = isSelected
-                  ? "rgba(245,158,11,0.14)"
-                  : "rgba(14,26,46,0.9)";
-                const stroke = isSelected ? "#f59e0b" : "#2a4a6e";
+                  ? "rgba(255,200,40,0.18)"
+                  : "rgba(255,255,255,0.90)";
+                const stroke = isSelected ? "rgba(220,150,0,0.70)" : "rgba(110,190,238,0.65)";
 
                 return (
                   <div
@@ -501,7 +501,7 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
                         fontSize="7"
                         fontFamily="Courier New, monospace"
                         fontWeight="700"
-                        fill={isSelected ? "#f5c542" : "#94b4d0"}
+                        fill={isSelected ? "#c07800" : "#0070a0"}
                         letterSpacing="0.5"
                       >
                         {seg.speaker}
@@ -512,7 +512,7 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
                         textAnchor="middle"
                         fontSize="5.5"
                         fontFamily="Courier New, monospace"
-                        fill="#4a6a8e"
+                        fill="#6aaac8"
                       >
                         {seg.duration}
                       </text>
@@ -521,7 +521,7 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
                 );
               })}
               {pool.length === 0 && (
-                <div className="pool-empty-hint">— AUCUN FRAGMENT —</div>
+                <div className="pool-empty-hint">- AUCUN FRAGMENT -</div>
               )}
             </div>
           </div>
@@ -575,10 +575,10 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
                   ANALYSE AUDIO
                 </span>
               </div>
-              <h3>RAPPORT — DICTAPHONE</h3>
+              <h3>RAPPORT - CASSETTE</h3>
               <div className="report-meta">
                 <span>Ref. AUD-ABYSSE-003</span>
-                <span>Piece : Dictaphone cabine Fontaine</span>
+                <span>Piece : Cassette audio cabine Fontaine</span>
               </div>
             </div>
             <div className="report-body">
@@ -616,7 +616,7 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
             </div>
             <div className="report-footer">
               <p className="report-instruction">
-                CONCLUSION : PREUVE DE PREMEDITATION — ESPIONNAGE INDUSTRIEL
+                CONCLUSION : PREUVE DE PREMEDITATION - ESPIONNAGE INDUSTRIEL
               </p>
               {!isCollected ? (
                 <button
@@ -626,14 +626,16 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
                   COLLECTER L'INDICE
                 </button>
               ) : (
-                <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+                <>
+                  <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+                  <button
+                    className="report-close-btn"
+                    onClick={() => setShowReport(false)}
+                  >
+                    FERMER LE RAPPORT
+                  </button>
+                </>
               )}
-              <button
-                className="report-close-btn"
-                onClick={() => setShowReport(false)}
-              >
-                FERMER LE RAPPORT
-              </button>
             </div>
           </div>
         </div>

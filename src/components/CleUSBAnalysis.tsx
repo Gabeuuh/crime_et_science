@@ -118,7 +118,7 @@ export default function CleUSBAnalysis({ onBack }: { onBack: () => void }) {
           <span className="header-dept">ENQUETE SOUS-MARINE</span>
           <span className="header-case">Mission Abysse-7</span>
         </div>
-        <span className="evidence-tag">INDICE 5 — CLE USB</span>
+        <span className="evidence-tag">INDICE 5 - DISQUE DUR</span>
       </header>
 
       <div className="canvas-container usb-container">
@@ -155,7 +155,7 @@ export default function CleUSBAnalysis({ onBack }: { onBack: () => void }) {
               ))}
             </div>
             {error && (
-              <p className="code-error">CODE INCORRECT — REESSAYEZ</p>
+              <p className="code-error">CODE INCORRECT - REESSAYEZ</p>
             )}
             <p className="code-hint">
               Cherchez le code dans le dossier physique
@@ -181,7 +181,7 @@ export default function CleUSBAnalysis({ onBack }: { onBack: () => void }) {
               HISTORIQUE DE COPIE DES DONNEES
             </div>
             <div className="graph-subtitle">
-              Cartographie sous-marine — 22 jours de mission
+              Cartographie sous-marine - 22 jours de mission
             </div>
             <div className="data-graph">
               {/* Y axis */}
@@ -268,7 +268,7 @@ export default function CleUSBAnalysis({ onBack }: { onBack: () => void }) {
             </div>
             <div className="graph-conclusion">
               Les données ont été copiées progressivement depuis le JOUR 1 de
-              la mission — le vol était planifié avant l'embarquement.
+              la mission - le vol était planifié avant l'embarquement.
             </div>
           </div>
         )}
@@ -311,10 +311,10 @@ export default function CleUSBAnalysis({ onBack }: { onBack: () => void }) {
                   ANALYSE NUMERIQUE
                 </span>
               </div>
-              <h3>RAPPORT — CLE USB</h3>
+              <h3>RAPPORT - DISQUE DUR</h3>
               <div className="report-meta">
                 <span>Ref. NUM-ABYSSE-005</span>
-                <span>Piece : Clé USB chiffrée</span>
+                <span>Piece : Disque dur chiffré</span>
               </div>
             </div>
             <div className="report-body">
@@ -324,7 +324,7 @@ export default function CleUSBAnalysis({ onBack }: { onBack: () => void }) {
                   <span className="report-row-label">Contenu</span>
                   <span className="report-row-value">
                     Copies complètes des données de cartographie sous-marine
-                    classifiées — 847 Go de données extraites
+                    classifiées - 847 Go de données extraites
                   </span>
                 </div>
               </div>
@@ -344,7 +344,7 @@ export default function CleUSBAnalysis({ onBack }: { onBack: () => void }) {
                   <span className="report-row-label">Conclusion</span>
                   <span className="report-row-value">
                     Le sabotage (alarme incendie) ne servait pas à voler les
-                    données — elles étaient déjà copiées. Il servait à couvrir
+                    données - elles étaient déjà copiées. Il servait à couvrir
                     la fuite de Léa Fontaine.
                   </span>
                 </div>
@@ -352,7 +352,7 @@ export default function CleUSBAnalysis({ onBack }: { onBack: () => void }) {
             </div>
             <div className="report-footer">
               <p className="report-instruction">
-                CONCLUSION : VOL DE DONNEES PLANIFIE DEPUIS LE DEBUT — LE
+                CONCLUSION : VOL DE DONNEES PLANIFIE DEPUIS LE DEBUT - LE
                 SABOTAGE SERVAIT A COUVRIR LA FUITE
               </p>
               <button

@@ -7,10 +7,10 @@ const NOTES = [
     y: 12,
     w: 80,
     h: 8,
-    text: "Capsules de secours activées — protocole ECHO-7",
+    text: "Capsules de secours activées - protocole ECHO-7",
     reportLabel: "Note manuscrite ligne 1",
     reportValue:
-      '"Capsules de secours activées — protocole ECHO-7" — écriture rapide, encre réactive aux UV',
+      '"Capsules de secours activées - protocole ECHO-7" - écriture rapide, encre réactive aux UV',
   },
   {
     x: 10,
@@ -20,7 +20,7 @@ const NOTES = [
     text: "Évacuation déclenchée à 03h47",
     reportLabel: "Note manuscrite ligne 2",
     reportValue:
-      '"Évacuation déclenchée à 03h47" — même écriture, pression forte sur le stylo',
+      '"Évacuation déclenchée à 03h47" - même écriture, pression forte sur le stylo',
   },
   {
     x: 10,
@@ -30,7 +30,7 @@ const NOTES = [
     text: "Aucun incendie détecté par les capteurs",
     reportLabel: "Note manuscrite ligne 3",
     reportValue:
-      '"Aucun incendie détecté par les capteurs" — souligné deux fois, encre différente',
+      '"Aucun incendie détecté par les capteurs" - souligné deux fois, encre différente',
   },
   {
     x: 10,
@@ -40,7 +40,7 @@ const NOTES = [
     text: "Vérifier le boîtier d'alarme",
     reportLabel: "Note manuscrite ligne 4",
     reportValue:
-      '"Vérifier le boîtier d\'alarme" — ajouté en marge, écriture hésitante',
+      '"Vérifier le boîtier d\'alarme" - ajouté en marge, écriture hésitante',
   },
 ];
 
@@ -206,7 +206,7 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
           <span className="header-dept">ENQUETE SOUS-MARINE</span>
           <span className="header-case">Mission Abysse-7</span>
         </div>
-        <span className="evidence-tag">INDICE 1 — MANUEL</span>
+        <span className="evidence-tag">INDICE 1 - MANUEL</span>
       </header>
 
       <div className="canvas-container">
@@ -219,7 +219,7 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
           {/* Manual page background */}
           <div className="manuel-page">
             {/* Printed title */}
-            <div className="manuel-title">MANUEL DE BORD — U.S.S. ABYSSE</div>
+            <div className="manuel-title">MANUEL DE BORD - U.S.S. ABYSSE</div>
             <div className="manuel-subtitle">
               Section 12 : Procédure d'évacuation d'urgence
             </div>
@@ -227,19 +227,19 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
             {/* Printed technical content - always visible */}
             <div className="manuel-printed">
               <p>
-                12.1 — Les capsules de secours (modèle KR-400) sont situées aux
+                12.1 - Les capsules de secours (modèle KR-400) sont situées aux
                 ponts 2 et 4.
               </p>
               <p>
-                12.2 — En cas d'alarme incendie, l'évacuation est automatique
+                12.2 - En cas d'alarme incendie, l'évacuation est automatique
                 sous 180 secondes.
               </p>
               <p>
-                12.3 — Le déclenchement manuel nécessite l'ouverture du boîtier
+                12.3 - Le déclenchement manuel nécessite l'ouverture du boîtier
                 rouge (pont 3).
               </p>
               <p>
-                12.4 — Chaque capsule peut accueillir 4 membres d'équipage.
+                12.4 - Chaque capsule peut accueillir 4 membres d'équipage.
               </p>
             </div>
 
@@ -253,7 +253,7 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
               </div>
             </div>
 
-            {/* Hidden notes — each has its own mini overlay canvas */}
+            {/* Hidden notes - each has its own mini overlay canvas */}
             {NOTES.map((note, i) => (
               <div
                 key={i}
@@ -335,7 +335,7 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
                   ANALYSE DOCUMENTAIRE
                 </span>
               </div>
-              <h3>RAPPORT — MANUEL DE BORD</h3>
+              <h3>RAPPORT - MANUEL DE BORD</h3>
               <div className="report-meta">
                 <span>Ref. DOC-ABYSSE-001</span>
                 <span>Piece : Manuel sous-marin</span>
@@ -366,14 +366,16 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
                   COLLECTER L'INDICE
                 </button>
               ) : (
-                <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+                <>
+                  <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+                  <button
+                    className="report-close-btn"
+                    onClick={() => setShowReport(false)}
+                  >
+                    FERMER LE RAPPORT
+                  </button>
+                </>
               )}
-              <button
-                className="report-close-btn"
-                onClick={() => setShowReport(false)}
-              >
-                FERMER LE RAPPORT
-              </button>
             </div>
           </div>
         </div>

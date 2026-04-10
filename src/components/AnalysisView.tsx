@@ -10,14 +10,14 @@ const TRACES = [
     scale: 0.14,
     label: "Empreinte digitale",
     reportLabel: "Empreinte digitale #1",
-    reportValue: "Boucle ulnaire gauche — 12 minuties",
+    reportValue: "Boucle ulnaire gauche - 12 minuties",
   },
   {
     position: [0.6, 0.5, 0.85] as [number, number, number],
     scale: 0.11,
     label: "Empreinte digitale",
     reportLabel: "Empreinte digitale #2",
-    reportValue: "Arc simple — 9 minuties",
+    reportValue: "Arc simple - 9 minuties",
   },
   {
     position: [0.15, 1.78, 1.0] as [number, number, number],
@@ -384,7 +384,7 @@ export default function AnalysisView({ onBack }: Props) {
           <span className="header-dept">POLICE SCIENTIFIQUE</span>
           <span className="header-case">Affaire #2024-0847</span>
         </div>
-        <span className="evidence-tag">PIECE A CONV. — TASSE</span>
+        <span className="evidence-tag">PIECE A CONV. - TASSE</span>
       </header>
 
       <div className="canvas-container">
@@ -455,7 +455,7 @@ export default function AnalysisView({ onBack }: Props) {
 
       {!uvOn && !showReport && (
         <div className="instructions">
-          FAIRE GLISSER POUR TOURNER — ACTIVER LA LAMPE UV POUR ANALYSER
+          FAIRE GLISSER POUR TOURNER - ACTIVER LA LAMPE UV POUR ANALYSER
         </div>
       )}
 

@@ -12,14 +12,14 @@ interface TargetObject {
 
 /* Map Teachable Machine labels → analysis IDs */
 const LABEL_MAP: Record<string, TargetObject> = {
-  "alarme-incendie": { id: "alarme",     name: "Boîtier d'alarme",     icon: "🚨" },
-  "cassette":        { id: "dictaphone", name: "Dictaphone",            icon: "🎙️" },
-  "disque-dur":      { id: "usb",        name: "Clé USB",               icon: "🔑" },
+  "alarme-incendie": { id: "alarme",     name: "Alarme incendie",      icon: "🚨" },
+  "cassette":        { id: "dictaphone", name: "Cassette",              icon: "🎙️" },
+  "disque-dur":      { id: "usb",        name: "Disque dur",            icon: "🔑" },
   "camera":          { id: "camera",     name: "Caméra surveillance",   icon: "📹" },
   "carnet":          { id: "carnet",     name: "Carnet",                icon: "📓" },
 };
 
-const CONFIDENCE_THRESHOLD = 0.75;
+const CONFIDENCE_THRESHOLD = 0.65;
 
 interface DetectionResult {
   targetObject: TargetObject | null;

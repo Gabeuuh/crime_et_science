@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import videoCameraUrl from "../static/video-camera.mp4";
 
 /* ── Crew data for identification ── */
 const CREW_DATA = [
@@ -13,8 +14,7 @@ const CREW_DATA = [
 const CORRECT_SILHOUETTE_1 = 2; // Dr. Thomas Aubert
 const CORRECT_SILHOUETTE_2 = 1; // Léa Fontaine
 
-// Replace this path with your actual video file
-const VIDEO_SRC = "/video-surveillance.mp4";
+const VIDEO_SRC = videoCameraUrl;
 
 type Phase = "viewing" | "quiz1" | "quiz2" | "done";
 
@@ -34,6 +34,8 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
   const [showReport, setShowReport] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
   const [videoError, setVideoError] = useState(false);
+  const [timestamp, setTimestamp] = useState("");
+  const [isRewatching, setIsRewatching] = useState(false);
 
   // Pan state
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -57,13 +59,15 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
     [zoom]
   );
 
-  /* ── Video ended → start quiz ── */
+  /* ── Video ended → start quiz or return to quiz ── */
   const handleVideoEnd = useCallback(() => {
     setVideoEnded(true);
     if (phase === "viewing") {
       setTimeout(() => setPhase("quiz1"), 1500);
+    } else if (isRewatching) {
+      setIsRewatching(false);
     }
-  }, [phase]);
+  }, [phase, isRewatching]);
 
   /* ── Video error or manual skip → start quiz ── */
   const handleVideoError = useCallback(() => {
@@ -75,6 +79,14 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
       setPhase("quiz1");
     }
   }, [phase]);
+
+  const handleRewatch = useCallback(() => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play();
+      setIsRewatching(true);
+    }
+  }, []);
 
   /* ── Zoom ── */
   const cycleZoom = useCallback(() => {
@@ -109,6 +121,19 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
 
   const handlePointerUp = useCallback(() => {
     isPanning.current = false;
+  }, []);
+
+  /* ── Live timestamp ── */
+  useEffect(() => {
+    const fmt = () => {
+      const now = new Date();
+      const d = now.toLocaleDateString("fr-FR").replace(/\//g, "-");
+      const t = now.toTimeString().slice(0, 8);
+      setTimestamp(`${d}  ${t}`);
+    };
+    fmt();
+    const id = setInterval(fmt, 1000);
+    return () => clearInterval(id);
   }, []);
 
   /* ── Auto-show report ── */
@@ -186,7 +211,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
           <span className="header-dept">ENQUETE SOUS-MARINE</span>
           <span className="header-case">Mission Abysse-7</span>
         </div>
-        <span className="evidence-tag">INDICE 4 — CAMERA</span>
+        <span className="evidence-tag">INDICE 4 - CAMERA</span>
       </header>
 
       <div className="canvas-container">
@@ -210,14 +235,20 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
               ref={videoRef}
               src={VIDEO_SRC}
               className="camera-video"
-              controls={phase === "viewing"}
+              controls={false}
               onEnded={handleVideoEnd}
               onError={handleVideoError}
               playsInline
+              autoPlay
             />
-            {/* Scanlines overlay for surveillance feel */}
+            {/* Surveillance overlays */}
             <div className="camera-scanlines" />
+            <div className="camera-noise" />
+            <div className="camera-vignette" />
           </div>
+
+          {/* REC indicator */}
+          <div className="camera-rec"><span className="camera-rec-dot" />REC</div>
 
           {/* Zoom button */}
           <button className="camera-zoom-btn" onClick={cycleZoom}>
@@ -225,12 +256,25 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
           </button>
 
           {/* Timestamp overlay */}
-          <div className="camera-timestamp">CAM-03 | PONT 3 — COULOIR</div>
+          <div className="camera-timestamp">
+            <span>CAM-03 | PONT 3 - COULOIR</span>
+            <span>{timestamp}</span>
+          </div>
 
           {zoom > 1 && (
             <div className="camera-pan-hint">
               GLISSEZ POUR DEPLACER LA VUE
             </div>
+          )}
+
+          {/* Return-to-quiz button while rewatching */}
+          {isRewatching && (
+            <button
+              className="camera-return-quiz-btn"
+              onClick={() => setIsRewatching(false)}
+            >
+              RETOUR AU QUIZ →
+            </button>
           )}
         </div>
 
@@ -263,15 +307,20 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
         )}
 
         {/* Identification quiz */}
-        {(phase === "quiz1" || phase === "quiz2") && (
+        {(phase === "quiz1" || phase === "quiz2") && !isRewatching && (
           <div className="camera-quiz">
-            <div className="camera-quiz-header">
-              {phase === "quiz1"
-                ? "IDENTIFIEZ LA SILHOUETTE 1 (grande, cheveux courts)"
-                : "IDENTIFIEZ LA SILHOUETTE 2 (petite, cheveux longs)"}
+            <div className="camera-quiz-top-row">
+              <div className="camera-quiz-header">
+                {phase === "quiz1"
+                  ? "IDENTIFIEZ LA SILHOUETTE 1 (grande, cheveux courts)"
+                  : "IDENTIFIEZ LA SILHOUETTE 2 (petite, cheveux longs)"}
+              </div>
+              <button className="camera-rewatch-btn" onClick={handleRewatch}>
+                ▶ REVOIR
+              </button>
             </div>
             <div className="camera-quiz-hint">
-              Consultez le dossier d'équipage — Tentative{" "}
+              Consultez le dossier d'équipage - Tentative{" "}
               {phase === "quiz1" ? attempts1 + 1 : attempts2 + 1}/2
             </div>
             <div className="camera-quiz-options">
@@ -297,7 +346,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
             </div>
             {quizResult === "wrong" && (
               <p className="match-feedback wrong">
-                Identification incorrecte — réessayez
+                Identification incorrecte - réessayez
               </p>
             )}
             {quizResult === "correct" && (
@@ -327,7 +376,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
                   ANALYSE VIDEO
                 </span>
               </div>
-              <h3>RAPPORT — CAMERA SURVEILLANCE</h3>
+              <h3>RAPPORT - CAMERA SURVEILLANCE</h3>
               <div className="report-meta">
                 <span>Ref. VID-ABYSSE-004</span>
                 <span>Piece : Camera couloir pont 3</span>
@@ -339,7 +388,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
                 <div className="report-row-content">
                   <span className="report-row-label">Silhouette 1</span>
                   <span className="report-row-value">
-                    Dr. Thomas Aubert (1m88, cheveux courts blonds) — a surpris
+                    Dr. Thomas Aubert (1m88, cheveux courts blonds) - a surpris
                     Léa Fontaine dans la salle de navigation
                   </span>
                 </div>
@@ -349,7 +398,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
                 <div className="report-row-content">
                   <span className="report-row-label">Silhouette 2</span>
                   <span className="report-row-value">
-                    Léa Fontaine (1m65, cheveux longs bruns) — confrontée par
+                    Léa Fontaine (1m65, cheveux longs bruns) - confrontée par
                     Aubert, se dirige vers le boîtier d'alarme
                   </span>
                 </div>
@@ -367,7 +416,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
             </div>
             <div className="report-footer">
               <p className="report-instruction">
-                CONCLUSION : FONTAINE DECOUVERTE PAR AUBERT — ALARME DECLENCHEE
+                CONCLUSION : FONTAINE DECOUVERTE PAR AUBERT - ALARME DECLENCHEE
                 DANS LA PANIQUE
               </p>
               {!isCollected ? (
@@ -378,14 +427,16 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
                   COLLECTER L'INDICE
                 </button>
               ) : (
-                <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+                <>
+                  <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+                  <button
+                    className="report-close-btn"
+                    onClick={() => setShowReport(false)}
+                  >
+                    FERMER LE RAPPORT
+                  </button>
+                </>
               )}
-              <button
-                className="report-close-btn"
-                onClick={() => setShowReport(false)}
-              >
-                FERMER LE RAPPORT
-              </button>
             </div>
           </div>
         </div>

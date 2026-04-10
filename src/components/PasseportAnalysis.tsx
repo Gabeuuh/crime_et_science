@@ -3,7 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Html } from "@react-three/drei";
 import * as THREE from "three";
 
-/* ── Trace data — each anomaly is visible only in a specific wavelength range ── */
+/* ── Trace data - each anomaly is visible only in a specific wavelength range ── */
 const TRACES = [
   {
     position: [0.0, 0.026, 0.15] as [number, number, number],
@@ -14,7 +14,7 @@ const TRACES = [
     label: "Filigrane altéré",
     reportLabel: "Filigrane de sécurité",
     reportValue:
-      "Filigrane partiellement effacé par solvant chimique — motif RF non conforme au standard ISO 7501",
+      "Filigrane partiellement effacé par solvant chimique - motif RF non conforme au standard ISO 7501",
   },
   {
     position: [-0.5, 0.026, -0.3] as [number, number, number],
@@ -25,7 +25,7 @@ const TRACES = [
     label: "Traces de colle",
     reportLabel: "Zone photo d'identité",
     reportValue:
-      "Fluorescence résiduelle de colle cyanoacrylate — photo recollée après substitution",
+      "Fluorescence résiduelle de colle cyanoacrylate - photo recollée après substitution",
   },
   {
     position: [0.5, 0.026, 0.0] as [number, number, number],
@@ -36,7 +36,7 @@ const TRACES = [
     label: "Encre différente",
     reportLabel: "Date de naissance",
     reportValue:
-      "Encre à base de colorant (visible IR) différente de l'encre d'origine à base de pigment — date modifiée",
+      "Encre à base de colorant (visible IR) différente de l'encre d'origine à base de pigment - date modifiée",
   },
   {
     position: [0.45, 0.026, -0.55] as [number, number, number],
@@ -47,11 +47,11 @@ const TRACES = [
     label: "Tampon contrefait",
     reportLabel: "Tampon d'entrée Schengen",
     reportValue:
-      "Absorption IR incohérente — encre jet d'encre domestique, non tampographie officielle",
+      "Absorption IR incohérente - encre jet d'encre domestique, non tampographie officielle",
   },
 ];
 
-/* ── Pulsing anomaly spot — only appears when wavelength is in range ── */
+/* ── Pulsing anomaly spot - only appears when wavelength is in range ── */
 function AnomalySpot({
   trace,
   visible,
@@ -278,7 +278,7 @@ export default function PasseportAnalysis({ onBack }: { onBack: () => void }) {
           <span className="header-dept">POLICE SCIENTIFIQUE</span>
           <span className="header-case">Affaire #2024-0847</span>
         </div>
-        <span className="evidence-tag">PIECE A CONV. — PASSEPORT</span>
+        <span className="evidence-tag">PIECE A CONV. - PASSEPORT</span>
       </header>
 
       <div className="canvas-container">
@@ -380,7 +380,7 @@ export default function PasseportAnalysis({ onBack }: { onBack: () => void }) {
             </div>
             <div className="report-footer">
               <p className="report-instruction">
-                CONCLUSION : DOCUMENT FALSIFIE — IDENTITE USURPEE
+                CONCLUSION : DOCUMENT FALSIFIE - IDENTITE USURPEE
               </p>
               <button className="report-close-btn" onClick={() => setShowReport(false)}>
                 FERMER LE RAPPORT

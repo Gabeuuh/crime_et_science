@@ -2871,6 +2871,7 @@ button {
     inset 0 1px 0 rgba(255, 255, 255, 0.85);
   transition: all 0.15s;
   white-space: nowrap;
+  min-height: unset !important;
 }
 .camera-rewatch-btn:active {
   transform: scale(0.95);
@@ -4331,7 +4332,6 @@ button {
 .login-btn,
 .cam-ctrl-btn,
 .fp-zoom-btn,
-.camera-rewatch-btn,
 .match-option,
 .camera-quiz-option {
   min-height: var(--btn-min-h);
@@ -4558,6 +4558,7 @@ button {
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.15s;
+  padding: 0 20px;
 }
 .onboarding-btn:hover { background: #005bb5; }
 

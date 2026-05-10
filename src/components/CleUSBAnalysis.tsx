@@ -24,7 +24,7 @@ const DATA_POINTS = [
 
 type Phase = "locked" | "decrypting" | "unlocked";
 
-export default function CleUSBAnalysis({ onBack }: { onBack: () => void }) {
+export default function CleUSBAnalysis({ onBack, onCollectClue, isCollected }: { onBack: () => void; onCollectClue?: () => void; isCollected?: boolean }) {
   const [code, setCode] = useState(["", "", "", ""]);
   const [phase, setPhase] = useState<Phase>("locked");
   const [error, setError] = useState(false);
@@ -365,12 +365,18 @@ export default function CleUSBAnalysis({ onBack }: { onBack: () => void }) {
                 CONCLUSION : VOL DE DONNEES PLANIFIE DEPUIS LE DEBUT - LE
                 SABOTAGE SERVAIT A COUVRIR LA FUITE
               </p>
-              <button
-                className="report-close-btn"
-                onClick={() => setShowReport(false)}
-              >
-                FERMER LE RAPPORT
-              </button>
+              {!isCollected ? (
+                <button className="collect-clue-btn" onClick={() => onCollectClue?.()}>
+                  COLLECTER L'INDICE
+                </button>
+              ) : (
+                <>
+                  <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
+                  <button className="report-close-btn" onClick={() => setShowReport(false)}>
+                    FERMER LE RAPPORT
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

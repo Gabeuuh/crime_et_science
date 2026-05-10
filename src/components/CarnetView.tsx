@@ -1,4 +1,4 @@
-const GAME_IDS = ["manuel", "alarme", "dictaphone", "camera"] as const;
+const GAME_IDS = ["manuel", "alarme", "dictaphone", "camera", "usb"] as const;
 type GameId = (typeof GAME_IDS)[number];
 
 const GAME_LABELS: Record<GameId, string> = {
@@ -6,6 +6,7 @@ const GAME_LABELS: Record<GameId, string> = {
   alarme: "Boîtier d'alarme incendie",
   dictaphone: "Dictaphone / cassette",
   camera: "Caméra de surveillance",
+  usb: "Disque dur chiffré",
 };
 
 const CLUE_CONCLUSIONS: Record<GameId, string> = {
@@ -17,6 +18,8 @@ const CLUE_CONCLUSIONS: Record<GameId, string> = {
     "Léa Fontaine était mandatée avant l'embarquement par une entreprise concurrente pour copier les données de cartographie. Préméditation confirmée par enregistrement.",
   camera:
     "Thomas Aubert a surpris Léa Fontaine dans la salle de navigation. Confrontation directe - alarme déclenchée impulsivement dans la panique.",
+  usb:
+    "847 Go de données de cartographie classifiées extraites sur 22 jours, dès le premier jour de mission. Le vol était terminé avant l'incident — l'alarme incendie servait uniquement à couvrir la fuite de Léa Fontaine.",
 };
 
 type Part = string | { blank: string; blocks: number };
@@ -85,6 +88,21 @@ const SECTIONS: { title: string; gameId: GameId; parts: Part[] }[] = [
       " qui se dirige vers le boîtier d'alarme. Ce n'était pas un plan préparé. C'était ",
       { blank: "une réaction de panique", blocks: 12 },
       " - une décision prise en quelques secondes, sans retour possible.",
+    ],
+  },
+  {
+    title: "Découverte du disque dur chiffré",
+    gameId: "usb",
+    parts: [
+      "Sur le disque dur récupéré : ",
+      { blank: "847 Go", blocks: 4 },
+      " de données de cartographie classifiées. La copie a été effectuée progressivement sur ",
+      { blank: "22 jours", blocks: 4 },
+      ", dès le ",
+      { blank: "premier jour", blocks: 8 },
+      " de la mission. Le vol était terminé bien avant l'incident. L'alarme incendie ne servait pas à voler les données — elles étaient déjà copiées. Elle servait à ",
+      { blank: "couvrir la fuite de Léa Fontaine", blocks: 12 },
+      ".",
     ],
   },
 ];

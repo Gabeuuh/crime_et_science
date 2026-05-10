@@ -21,7 +21,7 @@ const DEBUG_OBJECTS = [
   { id: "usb", name: "Disque dur", icon: "🔑" },
 ];
 
-const TOTAL_CLUES = 4;
+const TOTAL_CLUES = 5;
 
 type View = "login" | "onboarding" | "scan" | "analysis" | "debug";
 
@@ -82,7 +82,7 @@ function App() {
           />
         );
       case "usb":
-        return <CleUSBAnalysis onBack={handleBack} />;
+        return <CleUSBAnalysis onBack={handleBack} onCollectClue={() => handleCollectClue("usb")} isCollected={collectedClues.has("usb")} />;
       case "carnet":
         return (
           <CarnetAnalysis

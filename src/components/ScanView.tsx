@@ -17,7 +17,7 @@ const LABEL_MAP: Record<string, TargetObject> = {
   "cassette":        { id: "dictaphone", name: "Cassette",              icon: "🎙️" },
   "disque-dur":      { id: "usb",        name: "Disque dur",            icon: "🔑" },
   "camera":          { id: "camera",     name: "Caméra surveillance",   icon: "📹" },
-  "carnet":          { id: "carnet",     name: "Carnet",                icon: "📓" },
+  "carnet":          { id: "carnet",     name: "Carnet de navigation",  icon: "📓" },
 };
 
 const CONFIDENCE_THRESHOLD = 0.65;

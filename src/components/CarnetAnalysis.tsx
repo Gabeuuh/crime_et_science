@@ -200,7 +200,7 @@ export default function CarnetAnalysis({ onBack, onCollectClue, isCollected }: {
           <span className="header-dept">POLICE SCIENTIFIQUE</span>
           <span className="header-case">Affaire #2024-0847</span>
         </div>
-        <span className="evidence-tag">PIECE A CONV. - CARNET</span>
+        <span className="evidence-tag">PIECE A CONV. - CARNET DE NAVIGATION</span>
         <HelpButton
           title="AIDE — CARNET DE NAVIGATION"
           lines={[

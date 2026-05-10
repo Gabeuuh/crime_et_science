@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import HelpButton from "./HelpButton";
 
 /* ── Segments (correctOrder 0 → 4) ── */
 const SEGMENTS = [
@@ -264,6 +265,11 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
   const [showReport, setShowReport] = useState(false);
   const validating = useRef(false);
 
+  const [dragging, setDragging] = useState<{ segId: number; poolIdx: number } | null>(null);
+  const [ghostPos, setGhostPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [hoverSlot, setHoverSlot] = useState<number | null>(null);
+  const [hasInteracted, setHasInteracted] = useState(false);
+
   useEffect(() => {
     if (showTranscript) {
       const t = setTimeout(() => setShowReport(true), 3000);
@@ -352,11 +358,55 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
     [isCorrect, wrongSlots, slots, pool, selectedPoolIdx]
   );
 
+  const handlePiecePointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>, poolIdx: number, segId: number) => {
+      if (isCorrect || wrongSlots.length > 0) return;
+      e.currentTarget.setPointerCapture(e.pointerId);
+      setDragging({ segId, poolIdx });
+      setGhostPos({ x: e.clientX - PW / 2, y: e.clientY - PH / 2 });
+      setHasInteracted(true);
+    },
+    [isCorrect, wrongSlots]
+  );
+
+  const handlePiecePointerMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!dragging) return;
+      setGhostPos({ x: e.clientX - PW / 2, y: e.clientY - PH / 2 });
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const cell = el?.closest("[data-slot-idx]") as HTMLElement | null;
+      const idx = cell ? parseInt(cell.dataset.slotIdx!, 10) : null;
+      setHoverSlot(idx !== null && slots[idx] === null ? idx : null);
+    },
+    [dragging, slots]
+  );
+
+  const handlePiecePointerUp = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!dragging) return;
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const cell = el?.closest("[data-slot-idx]") as HTMLElement | null;
+      const targetSlot = cell ? parseInt(cell.dataset.slotIdx!, 10) : null;
+
+      if (targetSlot !== null && slots[targetSlot] === null) {
+        const { segId, poolIdx } = dragging;
+        setSlots((prev) => { const next = [...prev]; next[targetSlot] = segId; return next; });
+        setPool((prev) => prev.filter((_, i) => i !== poolIdx));
+        setSelectedPoolIdx(null);
+        navigator.vibrate?.(40);
+      }
+      setDragging(null);
+      setHoverSlot(null);
+    },
+    [dragging, slots]
+  );
+
   const placedCount = slots.filter((s) => s !== null).length;
 
   return (
     <div className="analysis-view">
-      <header className="analysis-header">
+      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
+      <header className="analysis-header" style={{ position: "relative" }}>
         <button className="back-btn" onClick={onBack}>
           ← RETOUR
         </button>
@@ -365,6 +415,15 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
           <span className="header-case">Mission Abysse-7</span>
         </div>
         <span className="evidence-tag">INDICE 3 - CASSETTE</span>
+        <HelpButton
+          title="AIDE — DICTAPHONE"
+          lines={[
+            "Glisse chaque fragment audio dans un emplacement numéroté",
+            "Place-les dans l'ordre chronologique de la conversation",
+            "Tu peux aussi appuyer sur un fragment puis sur un emplacement",
+            "Valide quand tous les 5 fragments sont placés",
+          ]}
+        />
       </header>
 
       <div className="canvas-container dictaphone-container">
@@ -396,13 +455,14 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
               {slots.map((segId, slotIdx) => {
                 const seg = segId !== null ? SEGMENTS[segId] : null;
                 const isWrong = wrongSlots.includes(slotIdx);
-                const canDrop = !seg && selectedPoolIdx !== null;
+                const canDrop = !seg && (selectedPoolIdx !== null || (dragging !== null));
 
                 return (
                   <div
                     key={slotIdx}
-                    className={`tape-slot-cell ${isWrong ? "shaking" : ""}`}
+                    className={`tape-slot-cell ${isWrong ? "shaking" : ""} ${hoverSlot === slotIdx && slots[slotIdx] === null ? "drag-hover" : ""}`}
                     style={{ zIndex: slotIdx }}
+                    data-slot-idx={slotIdx}
                     onClick={() => handleSlotClick(slotIdx)}
                   >
                     {seg ? (
@@ -436,6 +496,11 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
         {/* ── POOL ── */}
         {!isCorrect && (
           <div className="fragments-pool">
+            {!hasInteracted && (
+              <p className="instructions" style={{ textAlign: "center", marginBottom: 8 }}>
+                Glisse les segments audio dans l'ordre chronologique de la conversation
+              </p>
+            )}
             <div className="timeline-label">
               {pool.length > 0
                 ? `FRAGMENTS DISPONIBLES (${pool.length})`
@@ -457,8 +522,12 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
                 return (
                   <div
                     key={segId}
-                    className={`pool-piece-wrap ${isSelected ? "selected" : ""}`}
+                    className={`pool-piece-wrap ${isSelected ? "selected" : ""} ${!hasInteracted && !isCorrect && !dragging ? "breathing" : ""} ${dragging?.poolIdx === poolIdx ? "dragging-active" : ""}`}
+                    style={{ touchAction: "none", cursor: dragging?.poolIdx === poolIdx ? "grabbing" : "grab" }}
                     onClick={() => handlePoolClick(poolIdx)}
+                    onPointerDown={(e) => handlePiecePointerDown(e, poolIdx, segId)}
+                    onPointerMove={handlePiecePointerMove}
+                    onPointerUp={handlePiecePointerUp}
                   >
                     <svg
                       width={PW}
@@ -560,7 +629,7 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
             className="uv-dot"
             style={{ background: "#a855f7", boxShadow: "0 0 6px #a855f7" }}
           />
-          SÉLECTIONNEZ UN FRAGMENT, PUIS UN EMPLACEMENT POUR LE COLLER
+          {hasInteracted ? "PLACE TOUS LES FRAGMENTS DANS L'ORDRE" : "GLISSE LES FRAGMENTS DANS L'ORDRE DE LA CONVERSATION"}
         </div>
       )}
 
@@ -639,6 +708,33 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
             </div>
           </div>
         </div>
+      )}
+
+      {dragging && (
+        (() => {
+          const seg = SEGMENTS[dragging.segId];
+          const { left, right } = getConnectors(seg.correctOrder);
+          const path = puzzlePath(PW, PH, left, right);
+          const mid = PH / 2 - 8;
+          return (
+            <div
+              className="drag-ghost"
+              style={{ left: ghostPos.x, top: ghostPos.y }}
+            >
+              <svg width={PW} height={PH} viewBox={`0 0 ${PW} ${PH}`} style={{ overflow: "visible", display: "block" }}>
+                <path d={path} fill="rgba(255,255,255,0.90)" stroke="rgba(110,190,238,0.65)" strokeWidth="1.5" />
+                <g>
+                  {seg.wavePattern.map((hv, i) => {
+                    const bh = hv * 3.0;
+                    return <rect key={i} x={7 + i * 6.2} y={mid - bh / 2} width={4} height={bh} rx={1} fill="#00a0d8" opacity={0.9} />;
+                  })}
+                </g>
+                <text x={PW / 2} y={PH - 9} textAnchor="middle" fontSize="7" fontFamily="Courier New, monospace" fontWeight="700" fill="#0070a0" letterSpacing="0.5">{seg.speaker}</text>
+                <text x={PW / 2} y={PH - 2} textAnchor="middle" fontSize="5.5" fontFamily="Courier New, monospace" fill="#6aaac8">{seg.duration}</text>
+              </svg>
+            </div>
+          );
+        })()
       )}
     </div>
   );

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import "@tensorflow/tfjs";
 import * as tmImage from "@teachablemachine/image";
+import HelpButton from "./HelpButton";
 
 const MODEL_URL = "/model/tm-my-image-model/";
 
@@ -152,9 +153,19 @@ export default function ScanView({ onAnalyze }: Props) {
       <video ref={videoRef} autoPlay playsInline muted className="camera-feed" />
 
       {/* Header */}
-      <header className="header">
+      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
+      <header className="header" style={{ position: "relative" }}>
         <h1>🔍 INSPECTEUR</h1>
-        <p className="subtitle">Scanner les indices de la scène de crime</p>
+        <p className="subtitle">Pointe la caméra vers un objet et appuie sur SCANNER</p>
+        <HelpButton
+          title="AIDE — SCANNER"
+          lines={[
+            "Pointe la caméra vers un objet physique récupéré par le joueur VR.",
+            "Appuie sur SCANNER pour que l'IA identifie l'objet.",
+            "Une fois identifié, appuie sur ANALYSER L'INDICE.",
+            "Consulte le CARNET en bas de l'écran pour suivre ta progression.",
+          ]}
+        />
       </header>
 
       {/* Scan frame + animation */}

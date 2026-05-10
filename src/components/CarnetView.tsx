@@ -113,6 +113,24 @@ export default function CarnetView({ onClose, collectedClues }: Props) {
           </button>
         </header>
 
+        <div className="carnet-progress-wrap">
+          <div className="carnet-progress-track">
+            <div
+              className="carnet-progress-fill"
+              style={{ width: `${(collected / total) * 100}%` }}
+            />
+          </div>
+          <div className="carnet-progress-label">
+            {collected}/{total} indices — {allCollected ? "ENQUÊTE RÉSOLUE" : "ENQUÊTE EN COURS"}
+          </div>
+        </div>
+
+        {!allCollected && (
+          <div className="carnet-instruction">
+            Collecte tous les indices pour compléter le rapport d'enquête
+          </div>
+        )}
+
         {allCollected && (
           <div className="carnet-complete-banner">
             ✓ TOUS LES INDICES COLLECTÉS - ENQUÊTE RÉSOLUE
@@ -123,7 +141,7 @@ export default function CarnetView({ onClose, collectedClues }: Props) {
           {/* ── Left: collected clues ── */}
           <div className="carnet-left">
             <div className="carnet-col-title">
-              INDICES COLLECTÉS
+              CE QUE TU AS DÉCOUVERT
               <span className={`carnet-count ${allCollected ? "complete" : ""}`}>
                 {collected}/{total}
               </span>
@@ -192,8 +210,8 @@ export default function CarnetView({ onClose, collectedClues }: Props) {
                           );
                         }
                         return (
-                          <span key={i} className="carnet-blank">
-                            {"█".repeat(part.blocks)}
+                          <span key={i} className="carnet-blank-hint">
+                            [non révélé]
                           </span>
                         );
                       })}

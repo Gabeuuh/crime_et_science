@@ -4310,3 +4310,327 @@ button {
   text-transform: uppercase;
   border-top: 1px solid rgba(0, 212, 255, 0.08);
 }
+
+/* ══════════════════════════════════════
+   TABLET UX IMPROVEMENTS
+   ══════════════════════════════════════ */
+
+/* Global tablet tokens */
+:root {
+  --btn-min-h: 56px;
+}
+
+/* Minimum touch target on all action buttons */
+.scan-button,
+.analyze-btn,
+.retry-btn,
+.collect-clue-btn,
+.report-close-btn,
+.tool-btn,
+.onboarding-btn,
+.login-btn,
+.cam-ctrl-btn,
+.fp-zoom-btn,
+.camera-rewatch-btn,
+.match-option,
+.camera-quiz-option {
+  min-height: var(--btn-min-h);
+}
+
+/* More readable instructions */
+.instructions {
+  font-size: 15px !important;
+  padding: 14px 20px !important;
+  letter-spacing: 1px;
+}
+
+/* Idle pulse on scan frame to hint where to aim */
+@keyframes idle-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
+}
+
+.scan-frame:not(.active) .corner {
+  animation: idle-pulse 1.8s ease-in-out infinite;
+}
+
+/* ── Role banner ── */
+.role-banner {
+  width: 100%;
+  background: rgba(0, 30, 70, 0.9);
+  color: #5ba8d0;
+  font-size: 10px;
+  font-family: "Courier New", monospace;
+  letter-spacing: 2.5px;
+  text-align: center;
+  padding: 5px 16px;
+  border-bottom: 1px solid rgba(0, 114, 215, 0.25);
+  flex-shrink: 0;
+}
+
+/* ── HelpButton ── */
+.help-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  min-height: unset !important;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 114, 215, 0.6);
+  background: rgba(0, 30, 70, 0.85);
+  color: #7ec8f0;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  transition: background 0.15s;
+}
+.help-btn:hover { background: rgba(0, 60, 130, 0.9); }
+
+.help-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.help-card {
+  background: #071a2e;
+  border: 1.5px solid #0072D7;
+  border-radius: 8px;
+  padding: 24px 28px;
+  max-width: 420px;
+  width: 90%;
+}
+
+.help-card-title {
+  color: #7ec8f0;
+  font-size: 11px;
+  font-family: "Courier New", monospace;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(0, 114, 215, 0.3);
+  padding-bottom: 10px;
+}
+
+.help-card-lines {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+.help-card-lines li {
+  color: #b0d4ea;
+  font-size: 14px;
+  font-family: "Courier New", monospace;
+  line-height: 1.7;
+  padding: 3px 0;
+}
+
+.help-card-lines li::before {
+  content: "› ";
+  color: #0072D7;
+}
+
+.help-card-close {
+  width: 100%;
+  min-height: unset !important;
+  padding: 10px;
+  background: rgba(0, 114, 215, 0.15);
+  border: 1px solid rgba(0, 114, 215, 0.5);
+  color: #7ec8f0;
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-family: "Courier New", monospace;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.help-card-close:hover { background: rgba(0, 114, 215, 0.3); }
+
+/* ── OnboardingView ── */
+.onboarding-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #030d1a;
+  overflow: hidden;
+}
+
+.onboarding-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 114, 215, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 114, 215, 0.07) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.onboarding-skip {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: 1px solid rgba(0, 114, 215, 0.4);
+  color: #5ba8d0;
+  font-size: 11px;
+  font-family: "Courier New", monospace;
+  letter-spacing: 1.5px;
+  padding: 6px 14px;
+  cursor: pointer;
+  min-height: unset !important;
+  border-radius: 3px;
+}
+.onboarding-skip:hover { background: rgba(0, 114, 215, 0.1); }
+
+.onboarding-card {
+  background: rgba(4, 20, 45, 0.97);
+  border: 1.5px solid #0072D7;
+  border-radius: 12px;
+  padding: 40px 48px;
+  max-width: 480px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.onboarding-icon { font-size: 40px; line-height: 1; }
+
+.onboarding-title {
+  color: #7ec8f0;
+  font-size: 13px;
+  font-family: "Courier New", monospace;
+  letter-spacing: 3px;
+  font-weight: 700;
+}
+
+.onboarding-divider {
+  width: 60px;
+  height: 1px;
+  background: rgba(0, 114, 215, 0.5);
+}
+
+.onboarding-body {
+  color: #b0d4ea;
+  font-size: 15px;
+  font-family: "Courier New", monospace;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.onboarding-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.onboarding-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(0, 114, 215, 0.3);
+  border: 1px solid rgba(0, 114, 215, 0.5);
+  transition: background 0.2s;
+}
+.onboarding-dot.active { background: #0072D7; }
+
+.onboarding-btn {
+  width: 100%;
+  background: #0072D7;
+  color: #fff;
+  font-size: 13px;
+  font-family: "Courier New", monospace;
+  letter-spacing: 2px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.onboarding-btn:hover { background: #005bb5; }
+
+/* ── DictaphoneAnalysis drag & drop ── */
+@keyframes breathe {
+  0%, 100% { transform: scale(1) translateY(0); opacity: 1; }
+  50%       { transform: scale(1.04) translateY(-3px); opacity: 0.92; }
+}
+
+.pool-piece-wrap.breathing { animation: breathe 2.2s ease-in-out infinite; }
+.pool-piece-wrap.breathing:nth-child(2) { animation-delay: 0.4s; }
+.pool-piece-wrap.breathing:nth-child(3) { animation-delay: 0.8s; }
+.pool-piece-wrap.breathing:nth-child(4) { animation-delay: 1.2s; }
+.pool-piece-wrap.breathing:nth-child(5) { animation-delay: 1.6s; }
+
+.pool-piece-wrap.dragging-active { opacity: 0.3; }
+
+.tape-slot-cell.drag-hover .tape-empty-slot {
+  border: 2px dashed #0072D7 !important;
+  background: rgba(0, 114, 215, 0.18) !important;
+}
+
+.drag-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.88;
+  transform: scale(1.06) rotate(2deg);
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+}
+
+/* ── CarnetView improvements ── */
+.carnet-progress-wrap {
+  padding: 12px 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.carnet-progress-track {
+  height: 6px;
+  background: rgba(0, 114, 215, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.carnet-progress-fill {
+  height: 100%;
+  background: #0072D7;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.carnet-progress-label {
+  color: #5ba8d0;
+  font-size: 10px;
+  font-family: "Courier New", monospace;
+  letter-spacing: 1.5px;
+  text-align: center;
+}
+
+.carnet-instruction {
+  padding: 10px 20px;
+  color: #6a9abc;
+  font-size: 12px;
+  font-family: "Courier New", monospace;
+  letter-spacing: 1px;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 114, 215, 0.15);
+}
+
+.carnet-blank-hint {
+  color: rgba(100, 140, 170, 0.6);
+  font-style: italic;
+  font-size: 0.9em;
+}

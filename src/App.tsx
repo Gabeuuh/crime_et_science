@@ -139,7 +139,7 @@ function App() {
       {view === "analysis" && renderAnalysis()}
 
       {/* ── Carnet FAB ── */}
-      <button
+      {view !== "login" && view !== "onboarding" && <button
         className="carnet-fab"
         onClick={() => setShowCarnet(true)}
         aria-label="Ouvrir le carnet d'indices"
@@ -149,7 +149,7 @@ function App() {
         <span className={`carnet-fab-badge ${collectedClues.size === TOTAL_CLUES ? "complete" : ""}`}>
           {collectedClues.size}/{TOTAL_CLUES}
         </span>
-      </button>
+      </button>}
 
       {/* ── Carnet modal ── */}
       {showCarnet && (

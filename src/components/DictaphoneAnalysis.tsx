@@ -405,7 +405,6 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
 
   return (
     <div className="analysis-view">
-      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
       <header className="analysis-header" style={{ position: "relative" }}>
         <button className="back-btn" onClick={onBack}>
           ← RETOUR
@@ -425,6 +424,7 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
           ]}
         />
       </header>
+      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
 
       <div className="canvas-container dictaphone-container">
         {/* Dictaphone device */}

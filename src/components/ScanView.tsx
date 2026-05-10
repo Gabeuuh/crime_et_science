@@ -14,7 +14,7 @@ interface TargetObject {
 /* Map Teachable Machine labels → analysis IDs */
 const LABEL_MAP: Record<string, TargetObject> = {
   "alarme-incendie": { id: "alarme",     name: "Alarme incendie",      icon: "🚨" },
-  "cassette":        { id: "dictaphone", name: "Cassette",              icon: "🎙️" },
+  "cassette":        { id: "dictaphone", name: "Cassette",              icon: "📼" },
   "disque-dur":      { id: "usb",        name: "Disque dur",            icon: "🔑" },
   "camera":          { id: "camera",     name: "Caméra surveillance",   icon: "📹" },
   "carnet":          { id: "carnet",     name: "Carnet de navigation",  icon: "📓" },

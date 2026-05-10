@@ -8,6 +8,7 @@ import CameraAnalysis from "./components/CameraAnalysis";
 import CleUSBAnalysis from "./components/CleUSBAnalysis";
 import CarnetView from "./components/CarnetView";
 import CarnetAnalysis from "./components/CarnetAnalysis";
+import OnboardingView from "./components/OnboardingView";
 import "./App.css";
 
 const DEBUG = new URLSearchParams(window.location.search).has("debug");
@@ -22,7 +23,7 @@ const DEBUG_OBJECTS = [
 
 const TOTAL_CLUES = 4;
 
-type View = "login" | "scan" | "analysis" | "debug";
+type View = "login" | "onboarding" | "scan" | "analysis" | "debug";
 
 function App() {
   const [view, setView] = useState<View>("login");
@@ -104,7 +105,10 @@ function App() {
   return (
     <div className="app">
       {view === "login" && (
-        <LoginView onLogin={() => setView("scan")} />
+        <LoginView onLogin={() => setView("onboarding")} />
+      )}
+      {view === "onboarding" && (
+        <OnboardingView onDone={() => setView("scan")} />
       )}
       {view === "scan" && (
         <>

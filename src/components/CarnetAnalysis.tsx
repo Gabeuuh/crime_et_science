@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import HelpButton from "./HelpButton";
 
 /* ── Hidden text zones (indentations from previous page) ── */
 const TEXT_ZONES = [
@@ -191,7 +192,7 @@ export default function CarnetAnalysis({ onBack, onCollectClue, isCollected }: {
 
   return (
     <div className="analysis-view">
-      <header className="analysis-header">
+      <header className="analysis-header" style={{ position: "relative" }}>
         <button className="back-btn" onClick={onBack}>
           ← RETOUR
         </button>
@@ -200,7 +201,17 @@ export default function CarnetAnalysis({ onBack, onCollectClue, isCollected }: {
           <span className="header-case">Affaire #2024-0847</span>
         </div>
         <span className="evidence-tag">PIECE A CONV. - CARNET</span>
+        <HelpButton
+          title="AIDE — CARNET DE NAVIGATION"
+          lines={[
+            "Active le mode ESDA avec le bouton en bas de l'écran.",
+            "Frotte la surface du carnet avec ton doigt pour révéler les indentations.",
+            "Trouve les 4 lignes cachées pour générer le rapport.",
+            "Collecte l'indice une fois le rapport affiché.",
+          ]}
+        />
       </header>
+      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
 
       <div className="canvas-container">
         <div
@@ -295,7 +306,7 @@ export default function CarnetAnalysis({ onBack, onCollectClue, isCollected }: {
 
       {!esdaOn && !showReport && (
         <div className="instructions">
-          ACTIVEZ L'ESDA POUR REVELER LES INDENTATIONS D'ECRITURE
+          ▼ ACTIVEZ L'ESDA (bouton ci-dessous) — puis frottez le carnet pour révéler les indentations d'écriture
         </div>
       )}
 

@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import HelpButton from "./HelpButton";
 
 /* ── Secret code (found in physical dossier) ── */
 const SECRET_CODE = "7291";
@@ -110,7 +111,7 @@ export default function CleUSBAnalysis({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="analysis-view">
-      <header className="analysis-header">
+      <header className="analysis-header" style={{ position: "relative" }}>
         <button className="back-btn" onClick={onBack}>
           ← RETOUR
         </button>
@@ -119,7 +120,16 @@ export default function CleUSBAnalysis({ onBack }: { onBack: () => void }) {
           <span className="header-case">Mission Abysse-7</span>
         </div>
         <span className="evidence-tag">INDICE 5 - DISQUE DUR</span>
+        <HelpButton
+          title="AIDE — DISQUE DUR CHIFFRÉ"
+          lines={[
+            "Cherche le code à 4 chiffres dans le dossier physique fourni.",
+            "Saisis-le dans les 4 cases — la validation est automatique.",
+            "Le graphique révèle l'historique de copie des données une fois déchiffré.",
+          ]}
+        />
       </header>
+      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
 
       <div className="canvas-container usb-container">
         {/* USB Drive visual */}

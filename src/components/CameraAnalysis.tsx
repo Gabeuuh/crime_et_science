@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import videoCameraUrl from "../static/video-camera.mp4";
+import HelpButton from "./HelpButton";
 
 /* ── Crew data for identification ── */
 const CREW_DATA = [
@@ -203,7 +204,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
 
   return (
     <div className="analysis-view">
-      <header className="analysis-header">
+      <header className="analysis-header" style={{ position: "relative" }}>
         <button className="back-btn" onClick={onBack}>
           ← RETOUR
         </button>
@@ -212,7 +213,17 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
           <span className="header-case">Mission Abysse-7</span>
         </div>
         <span className="evidence-tag">INDICE 4 - CAMERA</span>
+        <HelpButton
+          title="AIDE — CAMÉRA DE SURVEILLANCE"
+          lines={[
+            "Regarde attentivement la vidéo de surveillance.",
+            "Utilise le bouton x1/x2/x3 pour zoomer sur les silhouettes.",
+            "Identifie les deux personnes filmées en te basant sur leur taille et description.",
+            "Collecte l'indice une fois le rapport affiché.",
+          ]}
+        />
       </header>
+      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
 
       <div className="canvas-container">
         {/* Video viewer with zoom & pan */}

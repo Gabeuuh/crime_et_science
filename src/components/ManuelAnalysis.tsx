@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import HelpButton from "./HelpButton";
 
 /* ── Hidden notes (invisible ink on the submarine manual page) ── */
 const NOTES = [
@@ -198,7 +199,7 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
 
   return (
     <div className="analysis-view">
-      <header className="analysis-header">
+      <header className="analysis-header" style={{ position: "relative" }}>
         <button className="back-btn" onClick={onBack}>
           ← RETOUR
         </button>
@@ -207,7 +208,17 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
           <span className="header-case">Mission Abysse-7</span>
         </div>
         <span className="evidence-tag">INDICE 1 - MANUEL</span>
+        <HelpButton
+          title="AIDE — MANUEL DE BORD"
+          lines={[
+            "Active le mode CHALEUR avec le bouton en bas de l'écran.",
+            "Frotte les zones du manuel avec ton doigt pour révéler l'encre invisible.",
+            "Trouve les 4 notes cachées pour générer le rapport.",
+            "Collecte l'indice une fois le rapport affiché.",
+          ]}
+        />
       </header>
+      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
 
       <div className="canvas-container">
         <div
@@ -320,7 +331,7 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
 
       {!heatOn && !showReport && (
         <div className="instructions">
-          ACTIVEZ LA CHALEUR POUR REVELER LES NOTES EN ENCRE INVISIBLE
+          ▼ ACTIVEZ LA CHALEUR (bouton ci-dessous) — puis frottez le manuel pour révéler l'encre invisible
         </div>
       )}
 

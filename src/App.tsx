@@ -1,15 +1,22 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import LoginView from "./components/LoginView";
-import ScanView from "./components/ScanView";
-import ManuelAnalysis from "./components/ManuelAnalysis";
-import AlarmeAnalysis from "./components/AlarmeAnalysis";
-import DictaphoneAnalysis from "./components/DictaphoneAnalysis";
-import CameraAnalysis from "./components/CameraAnalysis";
-import CleUSBAnalysis from "./components/CleUSBAnalysis";
-import CarnetView from "./components/CarnetView";
-import CarnetAnalysis from "./components/CarnetAnalysis";
-import OnboardingView from "./components/OnboardingView";
 import "./App.css";
+
+const ScanView        = lazy(() => import("./components/ScanView"));
+const OnboardingView  = lazy(() => import("./components/OnboardingView"));
+const ManuelAnalysis  = lazy(() => import("./components/ManuelAnalysis"));
+const AlarmeAnalysis  = lazy(() => import("./components/AlarmeAnalysis"));
+const DictaphoneAnalysis = lazy(() => import("./components/DictaphoneAnalysis"));
+const CameraAnalysis  = lazy(() => import("./components/CameraAnalysis"));
+const CleUSBAnalysis  = lazy(() => import("./components/CleUSBAnalysis"));
+const CarnetAnalysis  = lazy(() => import("./components/CarnetAnalysis"));
+const CarnetView      = lazy(() => import("./components/CarnetView"));
+
+const LoadingScreen = () => (
+  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100dvh", background: "#080f1a", color: "#475569", fontFamily: "Courier New, monospace", fontSize: "0.8rem", letterSpacing: "0.1em" }}>
+    CHARGEMENT...
+  </div>
+);
 
 const DEBUG = new URLSearchParams(window.location.search).has("debug");
 
@@ -106,7 +113,9 @@ function App() {
         <LoginView onLogin={() => setView("onboarding")} />
       )}
       {view === "onboarding" && (
-        <OnboardingView onDone={() => setView("home")} />
+        <Suspense fallback={<LoadingScreen />}>
+          <OnboardingView onDone={() => setView("home")} />
+        </Suspense>
       )}
 
       {/* ── Écran d'accueil ── */}
@@ -190,15 +199,19 @@ function App() {
       )}
 
       {view === "scan" && (
-        <>
+        <Suspense fallback={<LoadingScreen />}>
           <ScanView onAnalyze={handleAnalyze} />
           <button className="back-btn" style={{ position: "fixed", bottom: "90px", left: "50%", transform: "translateX(-50%)", zIndex: 50, background: "rgba(8,15,26,0.85)", border: "1px solid rgba(96,165,250,0.3)", borderRadius: "8px", padding: "10px 20px", color: "#93c5fd", cursor: "pointer", fontSize: "0.8rem", fontFamily: "Courier New, monospace" }} onClick={() => setView("home")}>
             ← RETOUR À L'ACCUEIL
           </button>
-        </>
+        </Suspense>
       )}
 
-      {view === "analysis" && renderAnalysis()}
+      {view === "analysis" && (
+        <Suspense fallback={<LoadingScreen />}>
+          {renderAnalysis()}
+        </Suspense>
+      )}
 
       {/* ── Carnet FAB (hors accueil/login/onboarding pour éviter doublon) ── */}
       {view !== "login" && view !== "onboarding" && view !== "home" && (
@@ -217,10 +230,12 @@ function App() {
 
       {/* ── Carnet modal ── */}
       {showCarnet && (
-        <CarnetView
-          onClose={() => setShowCarnet(false)}
-          collectedClues={collectedClues}
-        />
+        <Suspense fallback={<LoadingScreen />}>
+          <CarnetView
+            onClose={() => setShowCarnet(false)}
+            collectedClues={collectedClues}
+          />
+        </Suspense>
       )}
     </div>
   );

@@ -215,24 +215,9 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
         >
           INDICE 1 - MANUEL
         </span>
-        <HelpButton
-          title="AIDE - MANUEL DE BORD"
-          lines={[
-            "Active le mode CHALEUR avec le bouton ci-dessus.",
-            "Frotte les zones du manuel avec ton doigt pour révéler l'encre invisible.",
-            "Trouve les 4 notes cachées pour générer le rapport.",
-            "Collecte l'indice une fois le rapport affiché.",
-          ]}
-        />
       </header>
       <div className="role-banner">RÔLE : INSPECTEUR - Interface d'analyse</div>
 
-      {/* ── Consigne + bouton CHALEUR au-dessus du manuel ── */}
-      {!heatOn && !showReport && (
-        <div className="instructions" style={{ marginBottom: 0 }}>
-          ▼ ACTIVEZ LA CHALEUR (bouton ci-dessous) - puis frottez le manuel pour révéler l'encre invisible
-        </div>
-      )}
       <div className="tools-bar" style={{ position: "relative", zIndex: 10 }}>
         <button
           className={`tool-btn heat ${heatOn ? "active" : ""}`}
@@ -249,17 +234,26 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
             </span>
           </div>
         )}
+        <HelpButton
+          title="AIDE - MANUEL DE BORD"
+          lines={[
+            "Active la CHALEUR avec le bouton à gauche.",
+            "Frotte les zones du manuel avec ton doigt pour révéler l'encre invisible.",
+            "Trouve les 4 notes cachées pour générer le rapport.",
+            "Collecte l'indice une fois le rapport affiché.",
+          ]}
+        />
       </div>
 
+      {!heatOn && !showReport && (
+        <div className="uv-indicator" style={{ position: "relative", top: "auto", left: "auto", transform: "none", borderLeftColor: "#f97316" }}>
+          <span className="uv-dot" style={{ background: "#f97316", boxShadow: "0 0 6px #f97316" }} />
+          ACTIVEZ LA CHALEUR - puis frottez le manuel pour révéler l'encre invisible
+        </div>
+      )}
       {heatOn && !allFound && (
-        <div
-          className="uv-indicator"
-          style={{ borderLeftColor: "#f97316", marginTop: 0 }}
-        >
-          <span
-            className="uv-dot"
-            style={{ background: "#f97316", boxShadow: "0 0 6px #f97316" }}
-          />
+        <div className="uv-indicator" style={{ position: "relative", top: "auto", left: "auto", transform: "none", borderLeftColor: "#f97316" }}>
+          <span className="uv-dot" style={{ background: "#f97316", boxShadow: "0 0 6px #f97316" }} />
           {revealed.size === 0
             ? "CHAUFFEZ LES ZONES POUR REVELER L'ENCRE INVISIBLE"
             : `${revealed.size}/${NOTES.length} NOTES REVELEES`}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 
 interface Props {
   title: string;
@@ -12,7 +13,7 @@ export default function HelpButton({ title, lines }: Props) {
       <button className="help-btn" onClick={() => setOpen(true)} aria-label="Aide">
         ?
       </button>
-      {open && (
+      {open && createPortal(
         <div className="help-overlay" onClick={() => setOpen(false)}>
           <div className="help-card" onClick={(e) => e.stopPropagation()}>
             <div className="help-card-title">{title}</div>
@@ -25,7 +26,8 @@ export default function HelpButton({ title, lines }: Props) {
               FERMER
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

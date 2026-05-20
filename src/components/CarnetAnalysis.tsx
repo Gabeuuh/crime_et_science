@@ -208,24 +208,9 @@ export default function CarnetAnalysis({ onBack, onCollectClue, isCollected }: {
         >
           CARNET DE NAVIGATION
         </span>
-        <HelpButton
-          title="AIDE - CARNET DE NAVIGATION"
-          lines={[
-            "Active le mode ESDA avec le bouton ci-dessus.",
-            "Frotte la surface du carnet avec ton doigt pour révéler les indentations.",
-            "Trouve les 4 lignes cachées pour générer le rapport.",
-            "Collecte l'indice une fois le rapport affiché.",
-          ]}
-        />
       </header>
       <div className="role-banner">RÔLE : INSPECTEUR - Interface d'analyse</div>
 
-      {/* ── Consigne + bouton ESDA au-dessus du carnet ── */}
-      {!esdaOn && !showReport && (
-        <div className="instructions" style={{ marginBottom: 0 }}>
-          ▼ ACTIVEZ L'ESDA (bouton ci-dessous) - puis frottez le carnet pour révéler les indentations
-        </div>
-      )}
       <div className="tools-bar" style={{ position: "relative", zIndex: 10 }}>
         <button
           className={`tool-btn esda ${esdaOn ? "active" : ""}`}
@@ -242,17 +227,26 @@ export default function CarnetAnalysis({ onBack, onCollectClue, isCollected }: {
             </span>
           </div>
         )}
+        <HelpButton
+          title="AIDE - CARNET DE NAVIGATION"
+          lines={[
+            "Active l'ESDA avec le bouton à gauche.",
+            "Frotte la surface du carnet avec ton doigt pour révéler les indentations.",
+            "Trouve les 4 lignes cachées pour générer le rapport.",
+            "Collecte l'indice une fois le rapport affiché.",
+          ]}
+        />
       </div>
 
+      {!esdaOn && !showReport && (
+        <div className="uv-indicator" style={{ position: "relative", top: "auto", left: "auto", transform: "none", borderLeftColor: "#3b82f6" }}>
+          <span className="uv-dot" style={{ background: "#3b82f6", boxShadow: "0 0 6px #3b82f6" }} />
+          ACTIVEZ L'ESDA - puis frottez le carnet pour révéler les indentations
+        </div>
+      )}
       {esdaOn && !allFound && (
-        <div
-          className="uv-indicator"
-          style={{ borderLeftColor: "#3b82f6", marginTop: 0 }}
-        >
-          <span
-            className="uv-dot"
-            style={{ background: "#3b82f6", boxShadow: "0 0 6px #3b82f6" }}
-          />
+        <div className="uv-indicator" style={{ position: "relative", top: "auto", left: "auto", transform: "none", borderLeftColor: "#3b82f6" }}>
+          <span className="uv-dot" style={{ background: "#3b82f6", boxShadow: "0 0 6px #3b82f6" }} />
           {revealed.size === 0
             ? "GRATTEZ LA SURFACE POUR REVELER LES INDENTATIONS"
             : `${revealed.size}/${TEXT_ZONES.length} INDENTATIONS REVELEES`}

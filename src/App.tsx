@@ -182,7 +182,7 @@ function App() {
               </span>
             </button>
             <button
-              className="scan-button"
+              className="scan-button home-scan-button"
               style={{ width: "100%", padding: "14px", fontSize: "0.95rem" }}
               onClick={() => setView("scan")}
             >

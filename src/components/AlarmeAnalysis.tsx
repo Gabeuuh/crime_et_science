@@ -221,17 +221,47 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
           <span className="header-case">Mission Abysse-7</span>
         </div>
         <span className="evidence-tag">INDICE 2 - ALARME INCENDIE</span>
+      </header>
+      <div className="role-banner">RÔLE : INSPECTEUR - Interface d'analyse</div>
+
+      <div className="tools-bar" style={{ position: "relative", zIndex: 10 }}>
+        <button
+          className={`tool-btn ${uvOn ? "active" : ""}`}
+          onClick={() => setUvOn(!uvOn)}
+          disabled={phase === "match"}
+        >
+          <span className="tool-icon">{uvOn ? "◉" : "◎"}</span>
+          <span>LUMIERE UV</span>
+        </button>
+        {uvOn && phase === "sweep" && (
+          <div className="trace-counter">
+            <span className="counter-label">REVELATION</span>
+            <span className="counter-value">{Math.round(sweepProgress)}%</span>
+          </div>
+        )}
         <HelpButton
           title="AIDE - BOÎTIER D'ALARME"
           lines={[
-            "Active la LUMIÈRE UV avec le bouton en bas de l'écran.",
+            "Active la LUMIÈRE UV avec le bouton à gauche.",
             "Balaye le déclencheur rouge avec ton doigt pour révéler l'empreinte digitale.",
             "Une fois l'empreinte révélée, identifie à qui elle appartient parmi l'équipage.",
             "Collecte l'indice une fois le rapport affiché.",
           ]}
         />
-      </header>
-      <div className="role-banner">RÔLE : INSPECTEUR - Interface d'analyse</div>
+      </div>
+
+      {!uvOn && phase === "sweep" && (
+        <div className="uv-indicator" style={{ position: "relative", top: "auto", left: "auto", transform: "none" }}>
+          <span className="uv-dot" />
+          ACTIVEZ LA LUMIÈRE UV - puis balayez le déclencheur pour révéler l'empreinte
+        </div>
+      )}
+      {uvOn && phase === "sweep" && !fingerprintRevealed && (
+        <div className="uv-indicator" style={{ position: "relative", top: "auto", left: "auto", transform: "none" }}>
+          <span className="uv-dot" />
+          BALAYEZ LE DECLENCHEUR AVEC VOTRE DOIGT
+        </div>
+      )}
 
       <div className="canvas-container">
         <div
@@ -350,37 +380,6 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
         )}
       </div>
 
-      <div className="tools-bar">
-        <button
-          className={`tool-btn ${uvOn ? "active" : ""}`}
-          onClick={() => setUvOn(!uvOn)}
-          disabled={phase === "match"}
-        >
-          <span className="tool-icon">{uvOn ? "◉" : "◎"}</span>
-          <span>LUMIERE UV</span>
-        </button>
-        {uvOn && phase === "sweep" && (
-          <div className="trace-counter">
-            <span className="counter-label">REVELATION</span>
-            <span className="counter-value">
-              {Math.round(sweepProgress)}%
-            </span>
-          </div>
-        )}
-      </div>
-
-      {uvOn && phase === "sweep" && !fingerprintRevealed && (
-        <div className="uv-indicator">
-          <span className="uv-dot" />
-          BALAYEZ LE DECLENCHEUR AVEC VOTRE DOIGT
-        </div>
-      )}
-
-      {!uvOn && phase === "sweep" && (
-        <div className="instructions">
-          ▼ ACTIVEZ LA LUMIÈRE UV (bouton ci-dessous) - puis balayez le déclencheur pour révéler l'empreinte
-        </div>
-      )}
 
       {showReport && (
         <div className="report-overlay">

@@ -2,13 +2,12 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import videoCameraUrl from "../static/video-camera.mp4";
 import HelpButton from "./HelpButton";
 
-/* ── Crew data for identification ── */
+/* ── Crew data for identification (4 membres connus) ── */
 const CREW_DATA = [
-  { name: "Cpt. Marc Delaunay", taille: "1m82", carrure: "Forte", cheveux: "Courts, gris" },
-  { name: "Léa Fontaine", taille: "1m65", carrure: "Mince", cheveux: "Longs, bruns" },
-  { name: "Dr. Thomas Aubert", taille: "1m88", carrure: "Moyenne", cheveux: "Courts, blonds" },
-  { name: "Ing. Karim Benzara", taille: "1m75", carrure: "Moyenne", cheveux: "Courts, noirs" },
-  { name: "Lt. Sophie Mercier", taille: "1m70", carrure: "Athlétique", cheveux: "Mi-longs, roux" },
+  { name: "Cpt. Marc Delaunay" },
+  { name: "Léa Fontaine" },
+  { name: "Dr. Thomas Aubert" },
+  { name: "Ing. Karim Benzara" },
 ];
 
 /* Correct answers */
@@ -37,6 +36,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
   const [videoError, setVideoError] = useState(false);
   const [timestamp, setTimestamp] = useState("");
   const [isRewatching, setIsRewatching] = useState(false);
+  const [transitioning, setTransitioning] = useState(false);
 
   // Pan state
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -158,21 +158,22 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
       if (phase === "quiz1") {
         const isCorrect = i === CORRECT_SILHOUETTE_1;
         setQuizResult(isCorrect ? "correct" : "wrong");
-        if (isCorrect) {
-          navigator.vibrate?.(80);
+        const goToQuiz2 = () => {
+          setTransitioning(true);
           setTimeout(() => {
             setPhase("quiz2");
             setSelected(null);
             setQuizResult(null);
-          }, 1200);
+            setTransitioning(false);
+          }, 900);
+        };
+        if (isCorrect) {
+          navigator.vibrate?.(80);
+          setTimeout(goToQuiz2, 1000);
         } else {
           setAttempts1((prev) => prev + 1);
           if (attempts1 >= 1) {
-            setTimeout(() => {
-              setPhase("quiz2");
-              setSelected(null);
-              setQuizResult(null);
-            }, 1500);
+            setTimeout(goToQuiz2, 1200);
           } else {
             setTimeout(() => {
               setSelected(null);
@@ -214,7 +215,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
         </div>
         <span className="evidence-tag">INDICE 4 - CAMERA</span>
         <HelpButton
-          title="AIDE — CAMÉRA DE SURVEILLANCE"
+          title="AIDE - CAMÉRA DE SURVEILLANCE"
           lines={[
             "Regarde attentivement la vidéo de surveillance.",
             "Utilise le bouton x1/x2/x3 pour zoomer sur les silhouettes.",
@@ -223,7 +224,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
           ]}
         />
       </header>
-      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
+      <div className="role-banner">RÔLE : INSPECTEUR - Interface d'analyse</div>
 
       <div className="canvas-container">
         {/* Video viewer with zoom & pan */}
@@ -317,14 +318,31 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
           </div>
         )}
 
+        {/* Transition entre les deux questions */}
+        {transitioning && (
+          <div style={{
+            position: "absolute", inset: 0, background: "rgba(8,15,26,0.92)",
+            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+            zIndex: 20, gap: "12px"
+          }}>
+            <div style={{ fontSize: "2rem" }}>📹</div>
+            <div style={{ color: "#60a5fa", fontFamily: "Courier New, monospace", fontSize: "0.9rem", letterSpacing: "0.1em" }}>
+              ANALYSE SUIVANTE...
+            </div>
+            <div style={{ color: "#475569", fontSize: "0.75rem", fontFamily: "Courier New, monospace" }}>
+              IDENTIFIEZ LA DEUXIÈME SILHOUETTE
+            </div>
+          </div>
+        )}
+
         {/* Identification quiz */}
-        {(phase === "quiz1" || phase === "quiz2") && !isRewatching && (
+        {(phase === "quiz1" || phase === "quiz2") && !isRewatching && !transitioning && (
           <div className="camera-quiz">
             <div className="camera-quiz-top-row">
               <div className="camera-quiz-header">
                 {phase === "quiz1"
-                  ? "IDENTIFIEZ LA SILHOUETTE 1 (grande, cheveux courts)"
-                  : "IDENTIFIEZ LA SILHOUETTE 2 (petite, cheveux longs)"}
+                  ? "IDENTIFIEZ LA SILHOUETTE À DROITE"
+                  : "IDENTIFIEZ LA SILHOUETTE À GAUCHE"}
               </div>
               <button className="camera-rewatch-btn" onClick={handleRewatch}>
                 ▶ REVOIR
@@ -347,11 +365,9 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
                   }`}
                   onClick={() => handleCrewSelect(i)}
                   disabled={quizResult === "correct"}
+                  style={{ color: "#1e293b" }}
                 >
-                  <span className="cq-name">{crew.name}</span>
-                  <span className="cq-details">
-                    {crew.taille} · {crew.carrure} · {crew.cheveux}
-                  </span>
+                  <span className="cq-name" style={{ color: "#0f172a", fontWeight: 700 }}>{crew.name}</span>
                 </button>
               ))}
             </div>
@@ -362,7 +378,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
             )}
             {quizResult === "correct" && (
               <p className="match-feedback correct">
-                IDENTIFICATION CONFIRMEE
+                IDENTIFICATION CONFIRMÉE
               </p>
             )}
           </div>
@@ -381,17 +397,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
           <div className="report-card">
             <div className="report-stripe" />
             <div className="report-header">
-              <div className="report-badge-row">
-                <span className="report-badge">CONFIDENTIEL</span>
-                <span className="report-badge report-badge-blue">
-                  ANALYSE VIDEO
-                </span>
-              </div>
-              <h3>RAPPORT - CAMERA SURVEILLANCE</h3>
-              <div className="report-meta">
-                <span>Ref. VID-ABYSSE-004</span>
-                <span>Piece : Camera couloir pont 3</span>
-              </div>
+              <h3>RAPPORT - CAMÉRA SURVEILLANCE</h3>
             </div>
             <div className="report-body">
               <div className="report-row">
@@ -440,12 +446,14 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
               ) : (
                 <>
                   <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
-                  <button
-                    className="report-close-btn"
-                    onClick={() => setShowReport(false)}
-                  >
-                    FERMER LE RAPPORT
-                  </button>
+                  <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
+                    <button className="report-close-btn" onClick={() => setShowReport(false)}>
+                      FERMER
+                    </button>
+                    <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onBack}>
+                      ← RETOUR À L'ACCUEIL
+                    </button>
+                  </div>
                 </>
               )}
             </div>

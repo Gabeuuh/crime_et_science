@@ -121,15 +121,15 @@ export default function CleUSBAnalysis({ onBack, onCollectClue, isCollected }: {
         </div>
         <span className="evidence-tag">INDICE 5 - DISQUE DUR</span>
         <HelpButton
-          title="AIDE — DISQUE DUR CHIFFRÉ"
+          title="AIDE - DISQUE DUR CHIFFRÉ"
           lines={[
             "Cherche le code à 4 chiffres dans le dossier physique fourni.",
-            "Saisis-le dans les 4 cases — la validation est automatique.",
+            "Saisis-le dans les 4 cases - la validation est automatique.",
             "Le graphique révèle l'historique de copie des données une fois déchiffré.",
           ]}
         />
       </header>
-      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
+      <div className="role-banner">RÔLE : INSPECTEUR - Interface d'analyse</div>
 
       <div className="canvas-container usb-container">
         {/* USB Drive visual */}
@@ -276,9 +276,9 @@ export default function CleUSBAnalysis({ onBack, onCollectClue, isCollected }: {
                 <span>J22</span>
               </div>
             </div>
-            <div className="graph-conclusion">
+            <div className="graph-conclusion" style={{ color: "#cbd5e1" }}>
               Les données ont été copiées progressivement depuis le JOUR 1 de
-              la mission - le vol était planifié avant l'embarquement.
+              la mission — le vol était planifié avant l'embarquement.
             </div>
           </div>
         )}
@@ -315,17 +315,7 @@ export default function CleUSBAnalysis({ onBack, onCollectClue, isCollected }: {
           <div className="report-card">
             <div className="report-stripe" />
             <div className="report-header">
-              <div className="report-badge-row">
-                <span className="report-badge">CONFIDENTIEL</span>
-                <span className="report-badge report-badge-blue">
-                  ANALYSE NUMERIQUE
-                </span>
-              </div>
-              <h3>RAPPORT - DISQUE DUR</h3>
-              <div className="report-meta">
-                <span>Ref. NUM-ABYSSE-005</span>
-                <span>Piece : Disque dur chiffré</span>
-              </div>
+                <h3>RAPPORT - DISQUE DUR</h3>
             </div>
             <div className="report-body">
               <div className="report-row">
@@ -372,9 +362,14 @@ export default function CleUSBAnalysis({ onBack, onCollectClue, isCollected }: {
               ) : (
                 <>
                   <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
-                  <button className="report-close-btn" onClick={() => setShowReport(false)}>
-                    FERMER LE RAPPORT
-                  </button>
+                  <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
+                    <button className="report-close-btn" onClick={() => setShowReport(false)}>
+                      FERMER
+                    </button>
+                    <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onBack}>
+                      ← RETOUR À L'ACCUEIL
+                    </button>
+                  </div>
                 </>
               )}
             </div>

@@ -2,33 +2,12 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import empreinteImg from "../static/empreinte-detoure.png";
 import HelpButton from "./HelpButton";
 
-/* ── Crew fingerprints for matching ── */
+/* ── Crew fingerprints for matching (4 membres connus) ── */
 const CREW_MEMBERS = [
-  {
-    name: "Cpt. Marc Delaunay",
-    pattern: "Boucle ulnaire droite - 14 minuties",
-    match: false,
-  },
-  {
-    name: "Léa Fontaine",
-    pattern: "Verticille double - 11 minuties",
-    match: true,
-  },
-  {
-    name: "Dr. Thomas Aubert",
-    pattern: "Arc tente - 9 minuties",
-    match: false,
-  },
-  {
-    name: "Ing. Karim Benzara",
-    pattern: "Boucle radiale gauche - 13 minuties",
-    match: false,
-  },
-  {
-    name: "Lt. Sophie Mercier",
-    pattern: "Verticille simple - 10 minuties",
-    match: false,
-  },
+  { name: "Cpt. Marc Delaunay", match: false },
+  { name: "Léa Fontaine",       match: true  },
+  { name: "Dr. Thomas Aubert",  match: false },
+  { name: "Ing. Karim Benzara", match: false },
 ];
 
 const REVEAL_RADIUS = 22;
@@ -243,7 +222,7 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
         </div>
         <span className="evidence-tag">INDICE 2 - ALARME INCENDIE</span>
         <HelpButton
-          title="AIDE — BOÎTIER D'ALARME"
+          title="AIDE - BOÎTIER D'ALARME"
           lines={[
             "Active la LUMIÈRE UV avec le bouton en bas de l'écran.",
             "Balaye le déclencheur rouge avec ton doigt pour révéler l'empreinte digitale.",
@@ -252,7 +231,7 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
           ]}
         />
       </header>
-      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
+      <div className="role-banner">RÔLE : INSPECTEUR - Interface d'analyse</div>
 
       <div className="canvas-container">
         <div
@@ -322,11 +301,16 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
         {/* ── Fingerprint matching panel ── */}
         {phase === "match" && (
           <div className="match-panel">
+            {/* Empreinte visible au-dessus des choix */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px", padding: "8px 12px", background: "rgba(124,58,237,0.08)", borderRadius: "8px", border: "1px solid rgba(124,58,237,0.25)" }}>
+              <img src={empreinteImg} alt="empreinte" style={{ width: "60px", height: "60px", objectFit: "contain", filter: "drop-shadow(0 0 6px #7c3aed)" }} />
+              <div>
+                <div style={{ color: "#a78bfa", fontSize: "0.7rem", fontFamily: "Courier New, monospace", letterSpacing: "0.08em" }}>EMPREINTE RELEVÉE</div>
+                <div style={{ color: "#e2e8f0", fontSize: "0.75rem", marginTop: "4px" }}>Comparez avec les dossiers d'équipage</div>
+              </div>
+            </div>
             <div className="match-header">
               <span className="match-title">IDENTIFICATION D'EMPREINTE</span>
-              <span className="match-subtitle">
-                Comparez l'empreinte révélée avec les dossiers d'équipage
-              </span>
               {wrongAttempts > 0 && matchResult !== "correct" && (
                 <span className="match-attempts-left">
                   {MAX_ATTEMPTS - wrongAttempts} tentative{MAX_ATTEMPTS - wrongAttempts > 1 ? "s" : ""} restante{MAX_ATTEMPTS - wrongAttempts > 1 ? "s" : ""}
@@ -346,9 +330,9 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
                   }`}
                   onClick={() => handleCrewSelect(i)}
                   disabled={matchResult === "correct"}
+                  style={{ minHeight: "52px" }}
                 >
-                  <span className="match-name">{crew.name}</span>
-                  <span className="match-pattern">{crew.pattern}</span>
+                  <span className="match-name" style={{ fontSize: "1rem", fontWeight: 700, color: "#0f172a" }}>{crew.name}</span>
                 </button>
               ))}
             </div>
@@ -359,7 +343,7 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
             )}
             {matchResult === "correct" && (
               <p className="match-feedback correct">
-                CONCORDANCE CONFIRMEE - Léa Fontaine
+                CONCORDANCE CONFIRMÉE - Léa Fontaine
               </p>
             )}
           </div>
@@ -394,7 +378,7 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
 
       {!uvOn && phase === "sweep" && (
         <div className="instructions">
-          ▼ ACTIVEZ LA LUMIÈRE UV (bouton ci-dessous) — puis balayez le déclencheur pour révéler l'empreinte
+          ▼ ACTIVEZ LA LUMIÈRE UV (bouton ci-dessous) - puis balayez le déclencheur pour révéler l'empreinte
         </div>
       )}
 
@@ -403,17 +387,7 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
           <div className="report-card">
             <div className="report-stripe" />
             <div className="report-header">
-              <div className="report-badge-row">
-                <span className="report-badge">CONFIDENTIEL</span>
-                <span className="report-badge report-badge-blue">
-                  LABO. EMPREINTES
-                </span>
-              </div>
               <h3>RAPPORT D'EMPREINTES</h3>
-              <div className="report-meta">
-                <span>Ref. EMP-ABYSSE-002</span>
-                <span>Piece : Boîtier alarme incendie</span>
-              </div>
             </div>
             <div className="report-body">
               <div className="report-row">
@@ -465,12 +439,14 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
               ) : (
                 <>
                   <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
-                  <button
-                    className="report-close-btn"
-                    onClick={() => setShowReport(false)}
-                  >
-                    FERMER LE RAPPORT
-                  </button>
+                  <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
+                    <button className="report-close-btn" onClick={() => setShowReport(false)}>
+                      FERMER
+                    </button>
+                    <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onBack}>
+                      ← RETOUR À L'ACCUEIL
+                    </button>
+                  </div>
                 </>
               )}
             </div>

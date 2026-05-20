@@ -8,12 +8,12 @@ const SLIDES = [
   },
   {
     icon: "🔬",
-    title: "TON RÔLE — INSPECTEUR",
+    title: "TON RÔLE - INSPECTEUR",
     body: "Tu analyses les indices récupérés depuis le sous-marin. Chaque objet contient des informations cachées. Tu dois les révéler et les consigner dans ton carnet d'indices.",
   },
   {
     icon: "🥽",
-    title: "L'AUTRE JOUEUR — ÉQUIPE VR",
+    title: "L'AUTRE JOUEUR - ÉQUIPE VR",
     body: "Ton coéquipier explore le sous-marin en réalité virtuelle. Il te transmet les objets physiques à analyser. Vous collaborez pour résoudre l'enquête.",
   },
   {
@@ -35,7 +35,11 @@ export default function OnboardingView({ onDone }: Props) {
   return (
     <div className="onboarding-root">
       <div className="onboarding-grid" />
-      <button className="onboarding-skip" onClick={onDone}>
+      <button
+        className="onboarding-skip"
+        onClick={onDone}
+        style={{ fontSize: "1.1rem", padding: "14px 28px", fontWeight: 700 }}
+      >
         PASSER →
       </button>
       <div className="onboarding-card">
@@ -48,12 +52,23 @@ export default function OnboardingView({ onDone }: Props) {
             <span key={i} className={`onboarding-dot ${i === slide ? "active" : ""}`} />
           ))}
         </div>
-        <button
-          className="onboarding-btn"
-          onClick={() => (isLast ? onDone() : setSlide((s) => s + 1))}
-        >
-          {isLast ? "COMMENCER L'ENQUÊTE" : "SUIVANT →"}
-        </button>
+        <div style={{ display: "flex", gap: "12px", justifyContent: "center", marginTop: "8px" }}>
+          {slide > 0 && (
+            <button
+              className="onboarding-btn"
+              onClick={() => setSlide((s) => s - 1)}
+              style={{ background: "transparent", border: "1px solid rgba(96,165,250,0.4)", color: "#93c5fd", minWidth: "120px" }}
+            >
+              ← PRÉCÉDENT
+            </button>
+          )}
+          <button
+            className="onboarding-btn"
+            onClick={() => (isLast ? onDone() : setSlide((s) => s + 1))}
+          >
+            {isLast ? "COMMENCER L'ENQUÊTE" : "SUIVANT →"}
+          </button>
+        </div>
       </div>
     </div>
   );

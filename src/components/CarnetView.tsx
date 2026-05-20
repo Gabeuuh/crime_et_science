@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const GAME_IDS = ["manuel", "alarme", "dictaphone", "camera", "usb"] as const;
 type GameId = (typeof GAME_IDS)[number];
 
@@ -19,7 +21,7 @@ const CLUE_CONCLUSIONS: Record<GameId, string> = {
   camera:
     "Thomas Aubert a surpris Léa Fontaine dans la salle de navigation. Confrontation directe - alarme déclenchée impulsivement dans la panique.",
   usb:
-    "847 Go de données de cartographie classifiées extraites sur 22 jours, dès le premier jour de mission. Le vol était terminé avant l'incident — l'alarme incendie servait uniquement à couvrir la fuite de Léa Fontaine.",
+    "847 Go de données de cartographie classifiées extraites sur 22 jours, dès le premier jour de mission. Le vol était terminé avant l'incident - l'alarme incendie servait uniquement à couvrir la fuite de Léa Fontaine.",
 };
 
 type Part = string | { blank: string; blocks: number };
@@ -100,7 +102,7 @@ const SECTIONS: { title: string; gameId: GameId; parts: Part[] }[] = [
       { blank: "22 jours", blocks: 4 },
       ", dès le ",
       { blank: "premier jour", blocks: 8 },
-      " de la mission. Le vol était terminé bien avant l'incident. L'alarme incendie ne servait pas à voler les données — elles étaient déjà copiées. Elle servait à ",
+      " de la mission. Le vol était terminé bien avant l'incident. L'alarme incendie ne servait pas à voler les données - elles étaient déjà copiées. Elle servait à ",
       { blank: "couvrir la fuite de Léa Fontaine", blocks: 12 },
       ".",
     ],
@@ -113,10 +115,20 @@ interface Props {
 }
 
 export default function CarnetView({ onClose, collectedClues }: Props) {
+  const [expandedClues, setExpandedClues] = useState<Set<string>>(new Set());
   const total = GAME_IDS.length;
   const collected = collectedClues.size;
   const remaining = total - collected;
   const allCollected = collected === total;
+
+  const toggleExpand = (id: string) => {
+    setExpandedClues((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   return (
     <div className="carnet-overlay">
@@ -139,7 +151,7 @@ export default function CarnetView({ onClose, collectedClues }: Props) {
             />
           </div>
           <div className="carnet-progress-label">
-            {collected}/{total} indices — {allCollected ? "ENQUÊTE RÉSOLUE" : "ENQUÊTE EN COURS"}
+            {collected}/{total} indices - {allCollected ? "ENQUÊTE RÉSOLUE" : "ENQUÊTE EN COURS"}
           </div>
         </div>
 
@@ -175,25 +187,42 @@ export default function CarnetView({ onClose, collectedClues }: Props) {
             <div className="carnet-clues-list">
               {GAME_IDS.map((gameId) => {
                 const isCollected = collectedClues.has(gameId);
+                const isExpanded = expandedClues.has(gameId);
                 return (
                   <div
                     key={gameId}
                     className={`carnet-clue-item ${isCollected ? "collected" : "pending"}`}
+                    style={{ borderColor: isCollected ? "rgba(34,197,94,0.4)" : undefined }}
                   >
                     <div className="carnet-clue-header">
                       <span className="carnet-clue-dot">
                         {isCollected ? "●" : "○"}
                       </span>
-                      <span className="carnet-clue-label">
+                      <span className="carnet-clue-label" style={{ color: isCollected ? "#e2e8f0" : "#94a3b8", fontWeight: isCollected ? 600 : 400 }}>
                         {GAME_LABELS[gameId]}
                       </span>
                     </div>
                     {isCollected ? (
-                      <p className="carnet-clue-text">
-                        {CLUE_CONCLUSIONS[gameId]}
-                      </p>
+                      <>
+                        {isExpanded ? (
+                          <p className="carnet-clue-text" style={{ color: "#cbd5e1" }}>
+                            {CLUE_CONCLUSIONS[gameId]}
+                          </p>
+                        ) : null}
+                        <button
+                          style={{
+                            marginTop: "6px", fontSize: "0.7rem", padding: "4px 10px",
+                            background: "rgba(30,58,95,0.7)", border: "1px solid rgba(96,165,250,0.35)",
+                            borderRadius: "6px", color: "#93c5fd", cursor: "pointer",
+                            fontFamily: "Courier New, monospace", letterSpacing: "0.05em"
+                          }}
+                          onClick={() => toggleExpand(gameId)}
+                        >
+                          {isExpanded ? "▲ RÉDUIRE" : "▼ EN SAVOIR PLUS"}
+                        </button>
+                      </>
                     ) : (
-                      <p className="carnet-clue-pending">
+                      <p className="carnet-clue-pending" style={{ color: "#64748b" }}>
                         - indice non encore collecté -
                       </p>
                     )}
@@ -208,32 +237,40 @@ export default function CarnetView({ onClose, collectedClues }: Props) {
             <div className="carnet-col-title">RAPPORT D'INCIDENT</div>
             <div className="carnet-text-sections">
               {SECTIONS.map((section) => {
-                const revealed = collectedClues.has(section.gameId);
+                const collected = collectedClues.has(section.gameId);
+                const expanded = expandedClues.has(section.gameId);
+                const revealed = collected && expanded;
                 return (
                   <div
                     key={section.gameId}
                     className={`carnet-text-section ${revealed ? "revealed" : ""}`}
+                    style={{ opacity: collected ? 1 : 0.5 }}
                   >
-                    <div className="carnet-text-title">{section.title}</div>
-                    <p className="carnet-text-body">
-                      {section.parts.map((part, i) => {
-                        if (typeof part === "string") {
-                          return <span key={i}>{part}</span>;
-                        }
-                        if (revealed) {
+                    <div className="carnet-text-title" style={{ color: collected ? "#e2e8f0" : "#64748b" }}>
+                      {section.title}
+                    </div>
+                    {!collected ? (
+                      <p style={{ color: "#475569", fontSize: "0.8rem", fontStyle: "italic" }}>
+                        — indice non collecté —
+                      </p>
+                    ) : !expanded ? (
+                      <p style={{ color: "#64748b", fontSize: "0.8rem", fontStyle: "italic" }}>
+                        Cliquez sur "En savoir plus" pour révéler ce passage
+                      </p>
+                    ) : (
+                      <p className="carnet-text-body" style={{ color: "#cbd5e1" }}>
+                        {section.parts.map((part, i) => {
+                          if (typeof part === "string") {
+                            return <span key={i}>{part}</span>;
+                          }
                           return (
                             <span key={i} className="carnet-answer">
                               {part.blank}
                             </span>
                           );
-                        }
-                        return (
-                          <span key={i} className="carnet-blank-hint">
-                            [non révélé]
-                          </span>
-                        );
-                      })}
-                    </p>
+                        })}
+                      </p>
+                    )}
                   </div>
                 );
               })}

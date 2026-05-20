@@ -270,12 +270,7 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
   const [hoverSlot, setHoverSlot] = useState<number | null>(null);
   const [hasInteracted, setHasInteracted] = useState(false);
 
-  useEffect(() => {
-    if (showTranscript) {
-      const t = setTimeout(() => setShowReport(true), 3000);
-      return () => clearTimeout(t);
-    }
-  }, [showTranscript]);
+  // Suppression de l'auto-avancement : l'utilisateur clique "Suivant" manuellement
 
   const validate = useCallback(() => {
     if (validating.current || isCorrect) return;
@@ -415,7 +410,7 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
         </div>
         <span className="evidence-tag">INDICE 3 - CASSETTE</span>
         <HelpButton
-          title="AIDE — DICTAPHONE"
+          title="AIDE - DICTAPHONE"
           lines={[
             "Glisse chaque fragment audio dans un emplacement numéroté",
             "Place-les dans l'ordre chronologique de la conversation",
@@ -424,7 +419,7 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
           ]}
         />
       </header>
-      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
+      <div className="role-banner">RÔLE : INSPECTEUR - Interface d'analyse</div>
 
       <div className="canvas-container dictaphone-container">
         {/* Dictaphone device */}
@@ -609,6 +604,13 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
                     <span className="transcript-text">{seg.text}</span>
                   </div>
                 ))}
+              <button
+                className="collect-clue-btn"
+                style={{ marginTop: "16px", width: "100%" }}
+                onClick={() => setShowReport(true)}
+              >
+                SUIVANT →
+              </button>
             </div>
           </div>
         )}
@@ -638,17 +640,7 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
           <div className="report-card">
             <div className="report-stripe" />
             <div className="report-header">
-              <div className="report-badge-row">
-                <span className="report-badge">CONFIDENTIEL</span>
-                <span className="report-badge report-badge-blue">
-                  ANALYSE AUDIO
-                </span>
-              </div>
-              <h3>RAPPORT - CASSETTE</h3>
-              <div className="report-meta">
-                <span>Ref. AUD-ABYSSE-003</span>
-                <span>Piece : Cassette audio cabine Fontaine</span>
-              </div>
+                <h3>RAPPORT - CASSETTE</h3>
             </div>
             <div className="report-body">
               <div className="report-row">
@@ -697,12 +689,14 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
               ) : (
                 <>
                   <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
-                  <button
-                    className="report-close-btn"
-                    onClick={() => setShowReport(false)}
-                  >
-                    FERMER LE RAPPORT
-                  </button>
+                  <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
+                    <button className="report-close-btn" onClick={() => setShowReport(false)}>
+                      FERMER
+                    </button>
+                    <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onBack}>
+                      ← RETOUR À L'ACCUEIL
+                    </button>
+                  </div>
                 </>
               )}
             </div>

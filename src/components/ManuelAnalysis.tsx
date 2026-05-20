@@ -207,18 +207,64 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
           <span className="header-dept">ENQUETE SOUS-MARINE</span>
           <span className="header-case">Mission Abysse-7</span>
         </div>
-        <span className="evidence-tag">INDICE 1 - MANUEL</span>
+        <span
+          className="evidence-tag"
+          style={{ pointerEvents: "none", userSelect: "none", cursor: "default",
+            background: "rgba(15,23,42,0.7)", border: "1px solid rgba(96,165,250,0.3)",
+            borderRadius: "4px", padding: "2px 8px", fontSize: "0.65rem", color: "#93c5fd" }}
+        >
+          INDICE 1 - MANUEL
+        </span>
         <HelpButton
-          title="AIDE — MANUEL DE BORD"
+          title="AIDE - MANUEL DE BORD"
           lines={[
-            "Active le mode CHALEUR avec le bouton en bas de l'écran.",
+            "Active le mode CHALEUR avec le bouton ci-dessus.",
             "Frotte les zones du manuel avec ton doigt pour révéler l'encre invisible.",
             "Trouve les 4 notes cachées pour générer le rapport.",
             "Collecte l'indice une fois le rapport affiché.",
           ]}
         />
       </header>
-      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
+      <div className="role-banner">RÔLE : INSPECTEUR - Interface d'analyse</div>
+
+      {/* ── Consigne + bouton CHALEUR au-dessus du manuel ── */}
+      {!heatOn && !showReport && (
+        <div className="instructions" style={{ marginBottom: 0 }}>
+          ▼ ACTIVEZ LA CHALEUR (bouton ci-dessous) - puis frottez le manuel pour révéler l'encre invisible
+        </div>
+      )}
+      <div className="tools-bar" style={{ position: "relative", zIndex: 10 }}>
+        <button
+          className={`tool-btn heat ${heatOn ? "active" : ""}`}
+          onClick={() => setHeatOn(!heatOn)}
+        >
+          <span className="tool-icon">{heatOn ? "🔥" : "◎"}</span>
+          <span>CHALEUR</span>
+        </button>
+        {heatOn && (
+          <div className="trace-counter">
+            <span className="counter-label">NOTES</span>
+            <span className="counter-value">
+              {revealed.size}/{NOTES.length}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {heatOn && !allFound && (
+        <div
+          className="uv-indicator"
+          style={{ borderLeftColor: "#f97316", marginTop: 0 }}
+        >
+          <span
+            className="uv-dot"
+            style={{ background: "#f97316", boxShadow: "0 0 6px #f97316" }}
+          />
+          {revealed.size === 0
+            ? "CHAUFFEZ LES ZONES POUR REVELER L'ENCRE INVISIBLE"
+            : `${revealed.size}/${NOTES.length} NOTES REVELEES`}
+        </div>
+      )}
 
       <div className="canvas-container">
         <div
@@ -296,61 +342,12 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
         </div>
       </div>
 
-      <div className="tools-bar">
-        <button
-          className={`tool-btn heat ${heatOn ? "active" : ""}`}
-          onClick={() => setHeatOn(!heatOn)}
-        >
-          <span className="tool-icon">{heatOn ? "🔥" : "◎"}</span>
-          <span>CHALEUR</span>
-        </button>
-        {heatOn && (
-          <div className="trace-counter">
-            <span className="counter-label">NOTES</span>
-            <span className="counter-value">
-              {revealed.size}/{NOTES.length}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {heatOn && !allFound && (
-        <div
-          className="uv-indicator"
-          style={{ borderLeftColor: "#f97316" }}
-        >
-          <span
-            className="uv-dot"
-            style={{ background: "#f97316", boxShadow: "0 0 6px #f97316" }}
-          />
-          {revealed.size === 0
-            ? "CHAUFFEZ LES ZONES POUR REVELER L'ENCRE INVISIBLE"
-            : `${revealed.size}/${NOTES.length} NOTES REVELEES`}
-        </div>
-      )}
-
-      {!heatOn && !showReport && (
-        <div className="instructions">
-          ▼ ACTIVEZ LA CHALEUR (bouton ci-dessous) — puis frottez le manuel pour révéler l'encre invisible
-        </div>
-      )}
-
       {showReport && (
         <div className="report-overlay">
           <div className="report-card">
             <div className="report-stripe" />
             <div className="report-header">
-              <div className="report-badge-row">
-                <span className="report-badge">CONFIDENTIEL</span>
-                <span className="report-badge report-badge-blue">
-                  ANALYSE DOCUMENTAIRE
-                </span>
-              </div>
               <h3>RAPPORT - MANUEL DE BORD</h3>
-              <div className="report-meta">
-                <span>Ref. DOC-ABYSSE-001</span>
-                <span>Piece : Manuel sous-marin</span>
-              </div>
             </div>
             <div className="report-body">
               {NOTES.map((note, i) => (
@@ -379,12 +376,14 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
               ) : (
                 <>
                   <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
-                  <button
-                    className="report-close-btn"
-                    onClick={() => setShowReport(false)}
-                  >
-                    FERMER LE RAPPORT
-                  </button>
+                  <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
+                    <button className="report-close-btn" onClick={() => setShowReport(false)}>
+                      FERMER
+                    </button>
+                    <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onBack}>
+                      ← RETOUR À L'ACCUEIL
+                    </button>
+                  </div>
                 </>
               )}
             </div>

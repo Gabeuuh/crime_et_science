@@ -200,18 +200,64 @@ export default function CarnetAnalysis({ onBack, onCollectClue, isCollected }: {
           <span className="header-dept">POLICE SCIENTIFIQUE</span>
           <span className="header-case">Affaire #2024-0847</span>
         </div>
-        <span className="evidence-tag">PIECE A CONV. - CARNET DE NAVIGATION</span>
+        <span
+          className="evidence-tag"
+          style={{ pointerEvents: "none", userSelect: "none", cursor: "default",
+            background: "rgba(15,23,42,0.7)", border: "1px solid rgba(96,165,250,0.3)",
+            borderRadius: "4px", padding: "2px 8px", fontSize: "0.65rem", color: "#93c5fd" }}
+        >
+          CARNET DE NAVIGATION
+        </span>
         <HelpButton
-          title="AIDE — CARNET DE NAVIGATION"
+          title="AIDE - CARNET DE NAVIGATION"
           lines={[
-            "Active le mode ESDA avec le bouton en bas de l'écran.",
+            "Active le mode ESDA avec le bouton ci-dessus.",
             "Frotte la surface du carnet avec ton doigt pour révéler les indentations.",
             "Trouve les 4 lignes cachées pour générer le rapport.",
             "Collecte l'indice une fois le rapport affiché.",
           ]}
         />
       </header>
-      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
+      <div className="role-banner">RÔLE : INSPECTEUR - Interface d'analyse</div>
+
+      {/* ── Consigne + bouton ESDA au-dessus du carnet ── */}
+      {!esdaOn && !showReport && (
+        <div className="instructions" style={{ marginBottom: 0 }}>
+          ▼ ACTIVEZ L'ESDA (bouton ci-dessous) - puis frottez le carnet pour révéler les indentations
+        </div>
+      )}
+      <div className="tools-bar" style={{ position: "relative", zIndex: 10 }}>
+        <button
+          className={`tool-btn esda ${esdaOn ? "active" : ""}`}
+          onClick={() => setEsdaOn(!esdaOn)}
+        >
+          <span className="tool-icon">{esdaOn ? "⚡" : "◎"}</span>
+          <span>ESDA</span>
+        </button>
+        {esdaOn && (
+          <div className="trace-counter">
+            <span className="counter-label">LIGNES</span>
+            <span className="counter-value">
+              {revealed.size}/{TEXT_ZONES.length}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {esdaOn && !allFound && (
+        <div
+          className="uv-indicator"
+          style={{ borderLeftColor: "#3b82f6", marginTop: 0 }}
+        >
+          <span
+            className="uv-dot"
+            style={{ background: "#3b82f6", boxShadow: "0 0 6px #3b82f6" }}
+          />
+          {revealed.size === 0
+            ? "GRATTEZ LA SURFACE POUR REVELER LES INDENTATIONS"
+            : `${revealed.size}/${TEXT_ZONES.length} INDENTATIONS REVELEES`}
+        </div>
+      )}
 
       <div className="canvas-container">
         <div
@@ -271,61 +317,12 @@ export default function CarnetAnalysis({ onBack, onCollectClue, isCollected }: {
         </div>
       </div>
 
-      <div className="tools-bar">
-        <button
-          className={`tool-btn esda ${esdaOn ? "active" : ""}`}
-          onClick={() => setEsdaOn(!esdaOn)}
-        >
-          <span className="tool-icon">{esdaOn ? "⚡" : "◎"}</span>
-          <span>ESDA</span>
-        </button>
-        {esdaOn && (
-          <div className="trace-counter">
-            <span className="counter-label">LIGNES</span>
-            <span className="counter-value">
-              {revealed.size}/{TEXT_ZONES.length}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {esdaOn && !allFound && (
-        <div
-          className="uv-indicator"
-          style={{ borderLeftColor: "#3b82f6" }}
-        >
-          <span
-            className="uv-dot"
-            style={{ background: "#3b82f6", boxShadow: "0 0 6px #3b82f6" }}
-          />
-          {revealed.size === 0
-            ? "GRATTEZ LA SURFACE POUR REVELER LES INDENTATIONS"
-            : `${revealed.size}/${TEXT_ZONES.length} INDENTATIONS REVELEES`}
-        </div>
-      )}
-
-      {!esdaOn && !showReport && (
-        <div className="instructions">
-          ▼ ACTIVEZ L'ESDA (bouton ci-dessous) — puis frottez le carnet pour révéler les indentations d'écriture
-        </div>
-      )}
-
       {showReport && (
         <div className="report-overlay">
           <div className="report-card">
             <div className="report-stripe" />
             <div className="report-header">
-              <div className="report-badge-row">
-                <span className="report-badge">CONFIDENTIEL</span>
-                <span className="report-badge report-badge-blue">
-                  LABO. DOCUMENTS & TRACES
-                </span>
-              </div>
-              <h3>RAPPORT ESDA</h3>
-              <div className="report-meta">
-                <span>Ref. ESDA-2024-0847</span>
-                <span>Piece : Page arrachee carnet</span>
-              </div>
+                <h3>RAPPORT ESDA</h3>
             </div>
             <div className="report-body">
               {TEXT_ZONES.map((zone, i) => (
@@ -358,12 +355,14 @@ export default function CarnetAnalysis({ onBack, onCollectClue, isCollected }: {
               ) : (
                 <>
                   <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
-                  <button
-                    className="report-close-btn"
-                    onClick={() => setShowReport(false)}
-                  >
-                    FERMER LE RAPPORT
-                  </button>
+                  <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
+                    <button className="report-close-btn" onClick={() => setShowReport(false)}>
+                      FERMER
+                    </button>
+                    <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onBack}>
+                      ← RETOUR À L'ACCUEIL
+                    </button>
+                  </div>
                 </>
               )}
             </div>

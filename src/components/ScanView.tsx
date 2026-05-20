@@ -153,12 +153,12 @@ export default function ScanView({ onAnalyze }: Props) {
       <video ref={videoRef} autoPlay playsInline muted className="camera-feed" />
 
       {/* Header */}
-      <div className="role-banner">RÔLE : INSPECTEUR — Interface d'analyse</div>
+      <div className="role-banner">RÔLE : INSPECTEUR - Interface d'analyse</div>
       <header className="header" style={{ position: "relative" }}>
         <h1>🔍 INSPECTEUR</h1>
         <p className="subtitle">Pointe la caméra vers un objet et appuie sur SCANNER</p>
         <HelpButton
-          title="AIDE — SCANNER"
+          title="AIDE - SCANNER"
           lines={[
             "Pointe la caméra vers un objet physique récupéré par le joueur VR.",
             "Appuie sur SCANNER pour que l'IA identifie l'objet.",

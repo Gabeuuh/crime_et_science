@@ -4558,7 +4558,6 @@ button {
 .onboarding-dot.active { background: #0072D7; }
 
 .onboarding-btn {
-  width: 100%;
   background: #0072D7;
   color: #fff;
   font-size: 13px;
@@ -4569,6 +4568,7 @@ button {
   cursor: pointer;
   transition: background 0.15s;
   padding: 0 20px;
+  white-space: nowrap;
 }
 .onboarding-btn:hover { background: #005bb5; }
 

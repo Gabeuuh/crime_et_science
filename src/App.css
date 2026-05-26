@@ -1509,7 +1509,7 @@ button {
 .report-overlay {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 210;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -2125,14 +2125,14 @@ button {
 
 /* Fingerprint zoom overlay */
 .fp-zoom-overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  background: rgba(4, 18, 40, 0.88);
+  background: rgba(4, 18, 40, 0.92);
   backdrop-filter: blur(10px) saturate(1.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 20;
+  z-index: 210;
   animation: fade-in 0.3s ease;
 }
 .fp-zoom-card {
@@ -2161,8 +2161,8 @@ button {
   text-shadow: 0 0 10px rgba(0, 230, 190, 0.5);
 }
 .fp-zoom-img {
-  max-width: 80vw;
-  max-height: 50vh;
+  max-width: 90vw;
+  max-height: 72vh;
   object-fit: contain;
   border: 1px solid rgba(0, 220, 200, 0.5);
   border-radius: var(--r-md);

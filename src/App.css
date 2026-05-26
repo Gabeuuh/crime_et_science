@@ -2210,20 +2210,18 @@ button {
 
 /* Panneau identification - Frutiger Aero white glass */
 .match-panel {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
+  position: fixed;
+  inset: 0;
   background: linear-gradient(180deg,
     rgba(255,255,255,0.97) 0%,
     rgba(230,247,255,0.95) 100%
   );
-  border-top: 1px solid rgba(140,210,245,0.55);
-  padding: 14px 14px 16px;
-  z-index: 20;
-  animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  max-height: 60%;
+  padding: 16px 16px 24px;
+  z-index: 210;
+  animation: fade-in 0.3s ease-out;
   overflow-y: auto;
-  box-shadow: 0 -6px 24px rgba(80,160,220,0.18), inset 0 1px 0 rgba(255,255,255,0.90);
-  backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
 }
 .match-header { text-align: center; margin-bottom: 12px; }
 .match-title {

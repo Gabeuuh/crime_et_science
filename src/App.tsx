@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, useEffect } from "react";
 import LoginView from "./components/LoginView";
 import "./App.css";
 
@@ -37,6 +37,13 @@ function App() {
   const [objectId, setObjectId] = useState<string | null>(null);
   const [showCarnet, setShowCarnet] = useState(false);
   const [collectedClues, setCollectedClues] = useState<Set<string>>(new Set());
+  const [showEndGame, setShowEndGame] = useState(false);
+
+  useEffect(() => {
+    if (collectedClues.size === TOTAL_CLUES) {
+      setTimeout(() => setShowEndGame(true), 800);
+    }
+  }, [collectedClues]);
 
   const handleAnalyze = (id: string) => {
     setObjectId(id);
@@ -236,6 +243,72 @@ function App() {
             collectedClues={collectedClues}
           />
         </Suspense>
+      )}
+
+      {/* ── Modale fin de jeu ── */}
+      {showEndGame && !showCarnet && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 400,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          background: "rgba(2,12,24,0.85)",
+          backdropFilter: "blur(12px)",
+          padding: "24px",
+          animation: "fade-in 0.4s ease-out",
+        }}>
+          <div style={{
+            width: "100%", maxWidth: "400px",
+            background: "linear-gradient(170deg, rgba(255,255,255,0.97) 0%, rgba(220,245,255,0.95) 100%)",
+            borderRadius: "28px",
+            border: "1px solid rgba(0,140,220,0.3)",
+            boxShadow: "0 24px 80px rgba(0,60,140,0.35), inset 0 1px 0 rgba(255,255,255,0.98)",
+            padding: "32px 28px",
+            textAlign: "center",
+            display: "flex", flexDirection: "column", gap: "20px",
+          }}>
+            <div style={{ fontSize: "3rem" }}>🎉</div>
+            <div>
+              <div style={{
+                fontFamily: "Courier New, monospace",
+                fontSize: "0.75rem", letterSpacing: "0.15em",
+                color: "#16a34a", fontWeight: 700, marginBottom: "12px",
+              }}>ENQUÊTE RÉSOLUE</div>
+              <p style={{
+                margin: 0,
+                fontFamily: "Courier New, monospace",
+                fontSize: "1rem", lineHeight: 1.6,
+                color: "#0f172a", fontWeight: 600,
+              }}>
+                Vous avez résolu l'enquête, merci d'avoir joué à NEREIS-7.
+              </p>
+            </div>
+            <button
+              onClick={() => { setShowEndGame(false); setShowCarnet(true); }}
+              style={{
+                padding: "14px 24px",
+                background: "linear-gradient(180deg, #40c0ff 0%, #0088d0 50%, #0060a0 100%)",
+                border: "none", borderRadius: "50px",
+                color: "#fff", fontFamily: "Courier New, monospace",
+                fontSize: "0.9rem", fontWeight: 700, letterSpacing: "0.1em",
+                cursor: "pointer",
+                boxShadow: "0 4px 20px rgba(0,140,230,0.45), inset 0 1px 0 rgba(255,255,255,0.4)",
+              }}
+            >
+              📓 CONSULTER LES INDICES
+            </button>
+            <button
+              onClick={() => setShowEndGame(false)}
+              style={{
+                padding: "10px 20px",
+                background: "transparent", border: "1px solid rgba(0,100,180,0.3)",
+                borderRadius: "50px", color: "#0060a0",
+                fontFamily: "Courier New, monospace",
+                fontSize: "0.75rem", cursor: "pointer",
+              }}
+            >
+              FERMER
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -198,14 +198,14 @@ export default function CarnetView({ onClose, collectedClues }: Props) {
                       <span className="carnet-clue-dot">
                         {isCollected ? "●" : "○"}
                       </span>
-                      <span className="carnet-clue-label" style={{ color: isCollected ? "#e2e8f0" : "#94a3b8", fontWeight: isCollected ? 600 : 400 }}>
+                      <span className="carnet-clue-label" style={{ color: isCollected ? "#0f172a" : "#94a3b8", fontWeight: isCollected ? 700 : 400 }}>
                         {GAME_LABELS[gameId]}
                       </span>
                     </div>
                     {isCollected ? (
                       <>
                         {isExpanded ? (
-                          <p className="carnet-clue-text" style={{ color: "#cbd5e1" }}>
+                          <p className="carnet-clue-text" style={{ color: "#1e293b" }}>
                             {CLUE_CONCLUSIONS[gameId]}
                           </p>
                         ) : null}
@@ -246,7 +246,7 @@ export default function CarnetView({ onClose, collectedClues }: Props) {
                     className={`carnet-text-section ${revealed ? "revealed" : ""}`}
                     style={{ opacity: collected ? 1 : 0.5 }}
                   >
-                    <div className="carnet-text-title" style={{ color: collected ? "#e2e8f0" : "#64748b" }}>
+                    <div className="carnet-text-title" style={{ color: collected ? "#16a34a" : "#64748b" }}>
                       {section.title}
                     </div>
                     {!collected ? (
@@ -258,7 +258,7 @@ export default function CarnetView({ onClose, collectedClues }: Props) {
                         Cliquez sur "En savoir plus" pour révéler ce passage
                       </p>
                     ) : (
-                      <p className="carnet-text-body" style={{ color: "#cbd5e1" }}>
+                      <p className="carnet-text-body" style={{ color: "#1e293b" }}>
                         {section.parts.map((part, i) => {
                           if (typeof part === "string") {
                             return <span key={i}>{part}</span>;

@@ -331,13 +331,11 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected }: P
         {/* ── Fingerprint matching panel ── */}
         {phase === "match" && (
           <div className="match-panel">
-            {/* Empreinte visible au-dessus des choix */}
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px", padding: "8px 12px", background: "rgba(124,58,237,0.08)", borderRadius: "8px", border: "1px solid rgba(124,58,237,0.25)" }}>
-              <img src={empreinteImg} alt="empreinte" style={{ width: "60px", height: "60px", objectFit: "contain", filter: "drop-shadow(0 0 6px #7c3aed)" }} />
-              <div>
-                <div style={{ color: "#a78bfa", fontSize: "0.7rem", fontFamily: "Courier New, monospace", letterSpacing: "0.08em" }}>EMPREINTE RELEVÉE</div>
-                <div style={{ color: "#e2e8f0", fontSize: "0.75rem", marginTop: "4px" }}>Comparez avec les dossiers d'équipage</div>
-              </div>
+            {/* Empreinte bien visible en haut du panneau */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", marginBottom: "14px", padding: "12px", background: "rgba(124,58,237,0.08)", borderRadius: "12px", border: "1px solid rgba(124,58,237,0.25)" }}>
+              <div style={{ color: "#a78bfa", fontSize: "0.7rem", fontFamily: "Courier New, monospace", letterSpacing: "0.08em" }}>EMPREINTE RELEVÉE</div>
+              <img src={empreinteImg} alt="empreinte" style={{ width: "140px", height: "140px", objectFit: "contain", filter: "drop-shadow(0 0 12px #7c3aed)" }} />
+              <div style={{ color: "#1e293b", fontSize: "0.75rem", textAlign: "center", fontWeight: 600 }}>Comparez avec les empreintes du dossier d'équipage</div>
             </div>
             <div className="match-header">
               <span className="match-title">IDENTIFICATION D'EMPREINTE</span>

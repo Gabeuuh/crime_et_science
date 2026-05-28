@@ -266,7 +266,7 @@ export default function PhotoAnalysis({ onBack }: { onBack: () => void }) {
             </div>
             <div className="report-footer">
               <p className="report-instruction">
-                CONCLUSION : PHOTOGRAPHIE MANIPULEE NUMERIQUEMENT
+                CONCLUSION : PHOTOGRAPHIE MANIPULÉE NUMÉRIQUEMENT
               </p>
               <button
                 className="report-close-btn"

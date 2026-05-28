@@ -597,7 +597,7 @@ export default function SerrureAnalysis({ onBack }: { onBack: () => void }) {
             </div>
             <div className="report-footer">
               <p className="report-instruction">
-                CONCLUSION : EFFRACTION CONFIRMEE - OUTIL PROFESSIONNEL
+                CONCLUSION : EFFRACTION CONFIRMÉE - OUTIL PROFESSIONNEL
               </p>
               <button
                 className="report-close-btn"

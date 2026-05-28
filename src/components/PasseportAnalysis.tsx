@@ -380,7 +380,7 @@ export default function PasseportAnalysis({ onBack }: { onBack: () => void }) {
             </div>
             <div className="report-footer">
               <p className="report-instruction">
-                CONCLUSION : DOCUMENT FALSIFIE - IDENTITE USURPEE
+                CONCLUSION : DOCUMENT FALSIFIÉ - IDENTITÉ USURPÉE
               </p>
               <button className="report-close-btn" onClick={() => setShowReport(false)}>
                 FERMER LE RAPPORT

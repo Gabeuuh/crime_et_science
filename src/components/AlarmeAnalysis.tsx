@@ -425,7 +425,7 @@ export default function AlarmeAnalysis({ onBack, onCollectClue, isCollected, onO
             </div>
             <div className="report-footer">
               <p className="report-instruction">
-                CONCLUSION : FAUSSE ALARME DECLENCHEE PAR LEA FONTAINE
+                CONCLUSION : FAUSSE ALARME DÉCLENCHÉE PAR LÉA FONTAINE
               </p>
               {!isCollected ? (
                 <button

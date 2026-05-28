@@ -368,7 +368,7 @@ export default function SomniferesAnalysis({ onBack }: { onBack: () => void }) {
               ))}
             </div>
             <div className="report-footer">
-              <p className="report-instruction">CONCLUSION : MEDICAMENTS CONTREFAITS - SUBSTANCES CONTROLEES</p>
+              <p className="report-instruction">CONCLUSION : MÉDICAMENTS CONTREFAITS - SUBSTANCES CONTRÔLÉES</p>
               <button className="report-close-btn" onClick={() => setShowReport(false)}>FERMER LE RAPPORT</button>
             </div>
           </div>

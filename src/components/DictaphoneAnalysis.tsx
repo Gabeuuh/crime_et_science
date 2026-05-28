@@ -678,7 +678,7 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected,
             </div>
             <div className="report-footer">
               <p className="report-instruction">
-                CONCLUSION : PREUVE DE PREMEDITATION - ESPIONNAGE INDUSTRIEL
+                CONCLUSION : PREUVE DE PRÉMÉDITATION - ESPIONNAGE INDUSTRIEL
               </p>
               {!isCollected ? (
                 <button

@@ -446,7 +446,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected, onO
             </div>
             <div className="report-footer">
               <p className="report-instruction">
-                CONCLUSION : FONTAINE DECOUVERTE PAR AUBERT - ALARME DECLENCHEE
+                CONCLUSION : FONTAINE DÉCOUVERTE PAR AUBERT - ALARME DÉCLENCHÉE
                 DANS LA PANIQUE
               </p>
               {!isCollected ? (

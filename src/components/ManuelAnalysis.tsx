@@ -349,7 +349,7 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected, onO
             </div>
             <div className="report-footer">
               <p className="report-instruction">
-                CONCLUSION : L'EQUIPAGE A EVACUE PAR LES CAPSULES DE SECOURS
+                CONCLUSION : L'ÉQUIPAGE A ÉVACUÉ PAR LES CAPSULES DE SECOURS
               </p>
               {!isCollected ? (
                 <button

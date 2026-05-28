@@ -72,9 +72,9 @@
   --r-xl: 26px;
 
   /* Typography */
-  --font: "Nunito", -apple-system, sans-serif;
-  --mono: "Exo 2", "Courier New", monospace;
-  --display: "Exo 2", sans-serif;
+  --font: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: "Cascadia Mono", Consolas, "Courier New", monospace;
+  --display: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   --fs-xs: 10px;
   --fs-sm: 12px;

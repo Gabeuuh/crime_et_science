@@ -352,7 +352,7 @@ export default function CleUSBAnalysis({ onBack, onCollectClue, isCollected, onO
             </div>
             <div className="report-footer">
               <p className="report-instruction">
-                CONCLUSION : VOL DE DONNEES PLANIFIE DEPUIS LE DEBUT - LE
+                CONCLUSION : VOL DE DONNÉES PLANIFIÉ DEPUIS LE DÉBUT - LE
                 SABOTAGE SERVAIT A COUVRIR LA FUITE
               </p>
               {!isCollected ? (

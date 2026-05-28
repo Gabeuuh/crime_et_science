@@ -24,7 +24,7 @@ const DATA_POINTS = [
 
 type Phase = "locked" | "decrypting" | "unlocked";
 
-export default function CleUSBAnalysis({ onBack, onCollectClue, isCollected }: { onBack: () => void; onCollectClue?: () => void; isCollected?: boolean }) {
+export default function CleUSBAnalysis({ onBack, onCollectClue, isCollected, onOpenCarnet }: { onBack: () => void; onCollectClue?: () => void; isCollected?: boolean; onOpenCarnet?: () => void }) {
   const [code, setCode] = useState(["", "", "", ""]);
   const [phase, setPhase] = useState<Phase>("locked");
   const [error, setError] = useState(false);
@@ -363,8 +363,8 @@ export default function CleUSBAnalysis({ onBack, onCollectClue, isCollected }: {
                 <>
                   <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
                   <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
-                    <button className="report-close-btn" onClick={() => setShowReport(false)}>
-                      FERMER
+                    <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onOpenCarnet}>
+                      📓 CONSULTER LE CARNET
                     </button>
                     <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onBack}>
                       ← RETOUR À L'ACCUEIL

@@ -49,7 +49,7 @@ const TEXT_ZONES = [
 const SCRATCH_RADIUS = 28;
 const REVEAL_THRESHOLD = 0.45;
 
-export default function CarnetAnalysis({ onBack, onCollectClue, isCollected }: { onBack: () => void; onCollectClue?: () => void; isCollected?: boolean }) {
+export default function CarnetAnalysis({ onBack, onCollectClue, isCollected, onOpenCarnet }: { onBack: () => void; onCollectClue?: () => void; isCollected?: boolean; onOpenCarnet?: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [esdaOn, setEsdaOn] = useState(false);
@@ -350,8 +350,8 @@ export default function CarnetAnalysis({ onBack, onCollectClue, isCollected }: {
                 <>
                   <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
                   <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
-                    <button className="report-close-btn" onClick={() => setShowReport(false)}>
-                      FERMER
+                    <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onOpenCarnet}>
+                      📓 CONSULTER LE CARNET
                     </button>
                     <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onBack}>
                       ← RETOUR À L'ACCUEIL

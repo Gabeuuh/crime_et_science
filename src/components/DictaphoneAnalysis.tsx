@@ -251,9 +251,10 @@ interface Props {
   onBack: () => void;
   onCollectClue?: () => void;
   isCollected?: boolean;
+  onOpenCarnet?: () => void;
 }
 
-export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected }: Props) {
+export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected, onOpenCarnet }: Props) {
   const [pool, setPool] = useState<number[]>(INITIAL_POOL);
   const [slots, setSlots] = useState<(number | null)[]>([
     null, null, null, null, null,
@@ -690,8 +691,8 @@ export default function DictaphoneAnalysis({ onBack, onCollectClue, isCollected 
                 <>
                   <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
                   <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
-                    <button className="report-close-btn" onClick={() => setShowReport(false)}>
-                      FERMER
+                    <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onOpenCarnet}>
+                      📓 CONSULTER LE CARNET
                     </button>
                     <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onBack}>
                       ← RETOUR À L'ACCUEIL

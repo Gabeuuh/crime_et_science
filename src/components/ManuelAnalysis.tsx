@@ -52,9 +52,10 @@ interface Props {
   onBack: () => void;
   onCollectClue?: () => void;
   isCollected?: boolean;
+  onOpenCarnet?: () => void;
 }
 
-export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: Props) {
+export default function ManuelAnalysis({ onBack, onCollectClue, isCollected, onOpenCarnet }: Props) {
   const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const [heatOn, setHeatOn] = useState(false);
@@ -275,23 +276,42 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
               Section 12 : Procédure d'évacuation d'urgence
             </div>
 
-            {/* Printed technical content - always visible */}
-            <div className="manuel-printed">
-              <p>
-                12.1 - Les capsules de secours (modèle KR-400) sont situées aux
-                ponts 2 et 4.
-              </p>
-              <p>
-                12.2 - En cas d'alarme incendie, l'évacuation est automatique
-                sous 180 secondes.
-              </p>
-              <p>
-                12.3 - Le déclenchement manuel nécessite l'ouverture du boîtier
-                rouge (pont 3).
-              </p>
-              <p>
-                12.4 - Chaque capsule peut accueillir 4 membres d'équipage.
-              </p>
+            {/* Content interleaved: note zone then paragraph */}
+            <div className="manuel-content">
+              {[0, 1, 2, 3].map((i) => {
+                const paragraphs = [
+                  "12.1 - Les capsules de secours (modèle KR-400) sont situées aux ponts 2 et 4.",
+                  "12.2 - En cas d'alarme incendie, l'évacuation est automatique sous 180 secondes.",
+                  "12.3 - Le déclenchement manuel nécessite l'ouverture du boîtier rouge (pont 3).",
+                  "12.4 - Chaque capsule peut accueillir 4 membres d'équipage.",
+                ];
+                const noteStyles: React.CSSProperties[] = [
+                  { marginLeft: "3%",  width: "60%", transform: "rotate(-3deg)",  fontSize: "0.95em", marginBottom: "6px" },
+                  { marginLeft: "22%", width: "55%", transform: "rotate(2.5deg)", fontSize: "0.85em", marginTop: "4px" },
+                  { marginLeft: "8%",  width: "70%", transform: "rotate(-1.8deg)",fontSize: "1.05em", marginBottom: "2px" },
+                  { marginLeft: "30%", width: "50%", transform: "rotate(4deg)",   fontSize: "0.8em",  marginTop: "8px" },
+                ];
+                return (
+                  <div key={i} className="manuel-section">
+                    <div
+                      className={`manuel-hidden-note ${revealed.has(i) ? "revealed" : ""}`}
+                      style={noteStyles[i]}
+                      onPointerDown={(e) => handlePointerDown(e, i)}
+                      onPointerMove={(e) => handlePointerMove(e, i)}
+                    >
+                      <span className="manuel-note-text">{NOTES[i].text}</span>
+                      {heatOn && !revealed.has(i) && (
+                        <canvas
+                          ref={(el) => { canvasRefs.current[i] = el; }}
+                          className="manuel-note-canvas"
+                          style={{ touchAction: "none" }}
+                        />
+                      )}
+                    </div>
+                    <p className="manuel-printed-line">{paragraphs[i]}</p>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Diagram placeholder */}
@@ -303,35 +323,6 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
                 <div className="manuel-capsule" />
               </div>
             </div>
-
-            {/* Hidden notes - each has its own mini overlay canvas */}
-            {NOTES.map((note, i) => (
-              <div
-                key={i}
-                className={`manuel-hidden-note ${
-                  revealed.has(i) ? "revealed" : ""
-                }`}
-                style={{
-                  left: `${note.x}%`,
-                  top: `${note.y}%`,
-                  width: `${note.w}%`,
-                  height: `${note.h}%`,
-                }}
-                onPointerDown={(e) => handlePointerDown(e, i)}
-                onPointerMove={(e) => handlePointerMove(e, i)}
-              >
-                <span className="manuel-note-text">{note.text}</span>
-                {heatOn && !revealed.has(i) && (
-                  <canvas
-                    ref={(el) => {
-                      canvasRefs.current[i] = el;
-                    }}
-                    className="manuel-note-canvas"
-                    style={{ touchAction: "none" }}
-                  />
-                )}
-              </div>
-            ))}
           </div>
         </div>
       </div>
@@ -371,8 +362,8 @@ export default function ManuelAnalysis({ onBack, onCollectClue, isCollected }: P
                 <>
                   <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
                   <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
-                    <button className="report-close-btn" onClick={() => setShowReport(false)}>
-                      FERMER
+                    <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onOpenCarnet}>
+                      📓 CONSULTER LE CARNET
                     </button>
                     <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onBack}>
                       ← RETOUR À L'ACCUEIL

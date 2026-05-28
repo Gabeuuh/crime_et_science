@@ -67,6 +67,7 @@ function App() {
             onBack={handleBack}
             onCollectClue={() => handleCollectClue("manuel")}
             isCollected={collectedClues.has("manuel")}
+            onOpenCarnet={() => setShowCarnet(true)}
           />
         );
       case "alarme":
@@ -75,6 +76,7 @@ function App() {
             onBack={handleBack}
             onCollectClue={() => handleCollectClue("alarme")}
             isCollected={collectedClues.has("alarme")}
+            onOpenCarnet={() => setShowCarnet(true)}
           />
         );
       case "dictaphone":
@@ -83,6 +85,7 @@ function App() {
             onBack={handleBack}
             onCollectClue={() => handleCollectClue("dictaphone")}
             isCollected={collectedClues.has("dictaphone")}
+            onOpenCarnet={() => setShowCarnet(true)}
           />
         );
       case "camera":
@@ -91,16 +94,18 @@ function App() {
             onBack={handleBack}
             onCollectClue={() => handleCollectClue("camera")}
             isCollected={collectedClues.has("camera")}
+            onOpenCarnet={() => setShowCarnet(true)}
           />
         );
       case "usb":
-        return <CleUSBAnalysis onBack={handleBack} onCollectClue={() => handleCollectClue("usb")} isCollected={collectedClues.has("usb")} />;
+        return <CleUSBAnalysis onBack={handleBack} onCollectClue={() => handleCollectClue("usb")} isCollected={collectedClues.has("usb")} onOpenCarnet={() => setShowCarnet(true)} />;
       case "carnet":
         return (
           <CarnetAnalysis
             onBack={handleBack}
             onCollectClue={() => handleCollectClue("carnet")}
             isCollected={collectedClues.has("carnet")}
+            onOpenCarnet={() => setShowCarnet(true)}
           />
         );
       default:
@@ -109,6 +114,7 @@ function App() {
             onBack={handleBack}
             onCollectClue={() => handleCollectClue("manuel")}
             isCollected={collectedClues.has("manuel")}
+            onOpenCarnet={() => setShowCarnet(true)}
           />
         );
     }
@@ -136,7 +142,7 @@ function App() {
             <h2 style={{ margin: 0, fontSize: "1.1rem", color: "#e2e8f0", letterSpacing: "0.08em" }}>CHOISIR UN INDICE À ANALYSER</h2>
           </header>
 
-          <div className="debug-grid" style={{ flex: 1, padding: "0 16px", gap: "14px", alignContent: "start" }}>
+          <div className="debug-grid" style={{ flex: 1, padding: "40px 24px", gap: "20px", alignContent: "center" }}>
             {CLUE_OBJECTS.map((obj) => {
               const isCollected = collectedClues.has(obj.id);
               return (

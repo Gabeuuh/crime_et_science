@@ -22,9 +22,10 @@ interface Props {
   onBack: () => void;
   onCollectClue?: () => void;
   isCollected?: boolean;
+  onOpenCarnet?: () => void;
 }
 
-export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: Props) {
+export default function CameraAnalysis({ onBack, onCollectClue, isCollected, onOpenCarnet }: Props) {
   const [zoom, setZoom] = useState(1);
   const [phase, setPhase] = useState<Phase>("viewing");
   const [attempts1, setAttempts1] = useState(0);
@@ -447,8 +448,8 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected }: P
                 <>
                   <div className="clue-collected-badge">✓ INDICE COLLECTÉ</div>
                   <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
-                    <button className="report-close-btn" onClick={() => setShowReport(false)}>
-                      FERMER
+                    <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onOpenCarnet}>
+                      📓 CONSULTER LE CARNET
                     </button>
                     <button className="report-close-btn" style={{ background: "rgba(30,58,95,0.8)", borderColor: "rgba(96,165,250,0.5)", color: "#93c5fd" }} onClick={onBack}>
                       ← RETOUR À L'ACCUEIL

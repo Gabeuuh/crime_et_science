@@ -192,20 +192,21 @@ export default function CarnetView({ onClose, collectedClues }: Props) {
                   <div
                     key={gameId}
                     className={`carnet-clue-item ${isCollected ? "collected" : "pending"}`}
-                    style={{ borderColor: isCollected ? "rgba(34,197,94,0.4)" : undefined }}
+                    style={{ borderColor: isCollected ? "rgba(34,197,94,0.4)" : undefined, cursor: isCollected ? "pointer" : undefined }}
+                    onClick={isCollected ? () => toggleExpand(gameId) : undefined}
                   >
                     <div className="carnet-clue-header">
                       <span className="carnet-clue-dot">
                         {isCollected ? "●" : "○"}
                       </span>
-                      <span className="carnet-clue-label" style={{ color: isCollected ? "#0f172a" : "#94a3b8", fontWeight: isCollected ? 700 : 400 }}>
+                      <span className="carnet-clue-label" style={{ color: isCollected ? "#0a1628" : "#2e5a78", fontWeight: isCollected ? 700 : 600 }}>
                         {GAME_LABELS[gameId]}
                       </span>
                     </div>
                     {isCollected ? (
                       <>
                         {isExpanded ? (
-                          <p className="carnet-clue-text" style={{ color: "#1e293b" }}>
+                          <p className="carnet-clue-text" style={{ color: "#0a1e2e" }}>
                             {CLUE_CONCLUSIONS[gameId]}
                           </p>
                         ) : null}
@@ -213,16 +214,16 @@ export default function CarnetView({ onClose, collectedClues }: Props) {
                           style={{
                             marginTop: "6px", fontSize: "0.7rem", padding: "4px 10px",
                             background: "rgba(30,58,95,0.7)", border: "1px solid rgba(96,165,250,0.35)",
-                            borderRadius: "6px", color: "#93c5fd", cursor: "pointer",
+                            borderRadius: "6px", color: "#ffffff", cursor: "pointer",
                             fontFamily: "Courier New, monospace", letterSpacing: "0.05em"
                           }}
-                          onClick={() => toggleExpand(gameId)}
+                          onClick={(e) => { e.stopPropagation(); toggleExpand(gameId); }}
                         >
                           {isExpanded ? "▲ RÉDUIRE" : "▼ EN SAVOIR PLUS"}
                         </button>
                       </>
                     ) : (
-                      <p className="carnet-clue-pending" style={{ color: "#64748b" }}>
+                      <p className="carnet-clue-pending" style={{ color: "#3a6480" }}>
                         - indice non encore collecté -
                       </p>
                     )}

@@ -38,6 +38,7 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected, onO
   const [timestamp, setTimestamp] = useState("");
   const [isRewatching, setIsRewatching] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  const [subtitle, setSubtitle] = useState("");
 
   // Pan state
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -251,6 +252,14 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected, onO
               controls={false}
               onEnded={handleVideoEnd}
               onError={handleVideoError}
+              onTimeUpdate={(e) => {
+                const t = e.currentTarget.currentTime;
+                let sub = "";
+                if (t >= 2 && t < 3) sub = "Qu'est ce que tu fais ? Donne moi ça !";
+                else if (t >= 4 && t < 5) sub = "Attend je peux expliquer s'il te plait";
+                else if (t >= 6) sub = "Nan tu sais que c'est interdit ! Espionne !";
+                setSubtitle(prev => prev === sub ? prev : sub);
+              }}
               playsInline
               autoPlay
             />
@@ -258,6 +267,9 @@ export default function CameraAnalysis({ onBack, onCollectClue, isCollected, onO
             <div className="camera-scanlines" />
             <div className="camera-noise" />
             <div className="camera-vignette" />
+
+            {/* Subtitles */}
+            {subtitle && <div className="camera-subtitle">{subtitle}</div>}
           </div>
 
           {/* REC indicator */}

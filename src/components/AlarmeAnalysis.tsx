@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import empreinteImg from "../static/empreinte-detoure.png";
+import empreinteImg from "../static/empreinte-detoure.webp";
 import HelpButton from "./HelpButton";
 
 /* ── Crew fingerprints for matching (4 membres connus) ── */

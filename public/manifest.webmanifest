@@ -1,0 +1,19 @@
+{
+  "name": "Inspecteur NEREIS-7",
+  "short_name": "Inspecteur",
+  "description": "Interface d'analyse d'indices pour tablette.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#020c18",
+  "theme_color": "#020c18",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

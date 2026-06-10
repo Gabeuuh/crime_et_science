@@ -3,7 +3,7 @@ import "@tensorflow/tfjs";
 import * as tmImage from "@teachablemachine/image";
 import HelpButton from "./HelpButton";
 
-const MODEL_URL = "/model/tm-my-image-model/";
+const MODEL_URL = "/model/tm-my-image-model-v2/";
 
 interface TargetObject {
   id: string;

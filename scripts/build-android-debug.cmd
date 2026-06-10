@@ -32,7 +32,7 @@ call npx cap sync android
 if errorlevel 1 exit /b 1
 
 pushd android
-call gradlew.bat assembleDebug --console=plain
+call .\gradlew.bat assembleDebug --console=plain
 set "GRADLE_EXIT=%ERRORLEVEL%"
 popd
 

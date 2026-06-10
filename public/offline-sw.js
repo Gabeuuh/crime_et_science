@@ -1,13 +1,13 @@
-const CACHE_NAME = "inspecteur-nereis-offline-v1";
+const CACHE_NAME = "inspecteur-nereis-offline-v2";
 
 const PRECACHE_URLS = [
   "/",
   "/index.html",
   "/manifest.webmanifest",
   "/icon.svg",
-  "/model/tm-my-image-model/model.json",
-  "/model/tm-my-image-model/metadata.json",
-  "/model/tm-my-image-model/weights.bin"
+  "/model/tm-my-image-model-v2/model.json",
+  "/model/tm-my-image-model-v2/metadata.json",
+  "/model/tm-my-image-model-v2/weights.bin"
 ];
 
 self.addEventListener("install", (event) => {
